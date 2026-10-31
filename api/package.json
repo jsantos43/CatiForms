@@ -1,0 +1,31 @@
+{
+  "name": "catiforms",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/jsantos43/CatiForms#readme",
+  "bugs": {
+    "url": "https://github.com/jsantos43/CatiForms/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsantos43/CatiForms.git"
+  },
+  "license": "ISC",
+  "author": "João Pedro Tomaz dos Santos",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "express": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
