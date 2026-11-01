@@ -1,0 +1,37 @@
+# Ambiente de desenvolvimento: `docker compose up`
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: catiforms
+      POSTGRES_PASSWORD: catiforms
+      POSTGRES_DB: catiforms
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U catiforms -d catiforms"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    image: node:24
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgres://catiforms:catiforms@db:5432/catiforms
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:
+  node_modules:
