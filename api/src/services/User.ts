@@ -1,12 +1,11 @@
 import type { UUID } from 'node:crypto';
-import { db } from '../prisma/db.js';
 import { NotFound } from '../errors/index.js';
-
+import { db } from '../prisma/db.js';
 
 class User {
   static async readAll() {
     const users = await db.orm.public.User.all();
-    
+
     return users;
   }
 

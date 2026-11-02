@@ -11,7 +11,7 @@ const handleError = (err: Error, req: Request, res: Response, next: NextFunction
   }
 
   if (err.status === 500) console.error(err);
-  
+
   return err.send(res);
 };
 

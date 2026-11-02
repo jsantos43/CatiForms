@@ -1,15 +1,8 @@
-import NotFound from './NotFound.js';
 import Base from './Base.js';
-import InvalidRequest from './InvalidRequest.js';
-import Unathorized from './Unathorized.js';
 import Forbidden from './Forbidden.js';
 import Internal from './Internal.js';
+import InvalidRequest from './InvalidRequest.js';
+import NotFound from './NotFound.js';
+import Unathorized from './Unathorized.js';
 
-export {
-  NotFound,
-  Base,
-  InvalidRequest,
-  Unathorized,
-  Forbidden,
-  Internal,
-};
+export { Base, Forbidden, Internal, InvalidRequest, NotFound, Unathorized };

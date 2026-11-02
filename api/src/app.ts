@@ -1,7 +1,7 @@
-import express from "express";
-import routes from "./routes/index.js";
-import handleError from "./middlewares/handleError.js";
-import handleNotFound from "./middlewares/handleNotFound.js";
+import express from 'express';
+import handleError from './middlewares/handleError.js';
+import handleNotFound from './middlewares/handleNotFound.js';
+import routes from './routes/index.js';
 
 const app = express();
 
