@@ -3,7 +3,7 @@ import 'dotenv/config';
 const required = (name: string): string => {
   const value = process.env[name];
   if (!value) {
-    throw new Error(`Variável de ambiente ${name} não definida. Veja o .env.example.`);
+    throw new Error(`Environment variable ${name} is not defined, see .env.example`);
   }
   return value;
 };

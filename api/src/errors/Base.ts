@@ -8,7 +8,7 @@ class Base extends Error {
   details: string[];
 
   constructor(
-    message = 'Internal Server Error!',
+    message = 'Internal server error',
     status = 500,
     code = 'INTERNAL_ERROR',
     details: ErrorDetails = [],

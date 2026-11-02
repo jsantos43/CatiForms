@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { CreateUserData, UserIdParams } from '../schemas/User.js';
+import type { CreateUserData, UpdateUserData, UserIdParams } from '../schemas/User.js';
 import Service from '../services/User.js';
 
 class User {
@@ -37,18 +37,28 @@ class User {
     }
   }
 
-  static update(req: Request, res: Response) {
-    return res.status(200).json({
-      success: true,
-      msg: 'ok',
-    });
+  static async update(
+    req: Request<UserIdParams, unknown, UpdateUserData>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const user = await Service.update(req.params.id, req.body);
+
+      return res.status(200).json({ success: true, user });
+    } catch (err) {
+      return next(err);
+    }
   }
 
-  static delete(req: Request, res: Response) {
-    return res.status(200).json({
-      success: true,
-      msg: 'ok',
-    });
+  static async delete(req: Request<UserIdParams>, res: Response, next: NextFunction) {
+    try {
+      const user = await Service.delete(req.params.id);
+
+      return res.status(200).json({ success: true, user });
+    } catch (err) {
+      return next(err);
+    }
   }
 }
 
