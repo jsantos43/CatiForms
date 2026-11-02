@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { InvalidRequest } from '../errors/index.js';
+import type { CreateUserData, UserIdParams } from '../schemas/User.js';
 import Service from '../services/User.js';
-import isUUID from '../utils/isUUID.js';
 
 class User {
   static async readAll(req: Request, res: Response, next: NextFunction) {
@@ -14,15 +13,9 @@ class User {
     }
   }
 
-  static async readById(req: Request, res: Response, next: NextFunction) {
+  static async readById(req: Request<UserIdParams>, res: Response, next: NextFunction) {
     try {
-      const id = req.params['id'];
-
-      if (!isUUID(id)) {
-        throw new InvalidRequest('O id precisa ser um UUID válido');
-      }
-
-      const user = await Service.readById(id);
+      const user = await Service.readById(req.params.id);
 
       return res.status(200).json({ success: true, user });
     } catch (err) {
@@ -30,11 +23,18 @@ class User {
     }
   }
 
-  static create(req: Request, res: Response) {
-    return res.status(200).json({
-      success: true,
-      msg: 'ok',
-    });
+  static async create(
+    req: Request<Record<string, string>, unknown, CreateUserData>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const user = await Service.create(req.body);
+
+      return res.status(201).json({ success: true, user });
+    } catch (err) {
+      return next(err);
+    }
   }
 
   static update(req: Request, res: Response) {
