@@ -1,4 +1,7 @@
+import type { UUID } from 'node:crypto';
 import { db } from '../prisma/db.js';
+import { NotFound } from '../errors/index.js';
+
 
 class User {
   static async readAll() {
@@ -7,8 +10,14 @@ class User {
     return users;
   }
 
-  static readById(id: number) {
-    return db.orm.public.User.first({ id });
+  static async readById(id: UUID) {
+    const user = await db.orm.public.User.first({ id });
+
+    if (!user) {
+      throw new NotFound('Usuário não encontrado');
+    }
+
+    return user;
   }
 }
 
