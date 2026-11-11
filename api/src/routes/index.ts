@@ -1,4 +1,5 @@
 import type { Express, Request, Response } from 'express';
+import auth from './auth.js';
 import user from './user.js';
 
 const routes = (app: Express) => {
@@ -6,7 +7,7 @@ const routes = (app: Express) => {
     res.json({ mensagem: 'Olá, mundo!' });
   });
 
-  app.use(user);
+  app.use(user, auth);
 };
 
 export default routes;

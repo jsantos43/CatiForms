@@ -50,6 +50,27 @@
                   "kind": "scalar"
                 }
               },
+              "refreshTokenExpires": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "refreshTokenHash": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sessionVersion": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "updatedAt": {
                 "nullable": false,
                 "type": {
@@ -82,6 +103,15 @@
                 },
                 "password": {
                   "column": "password"
+                },
+                "refreshTokenExpires": {
+                  "column": "refreshTokenExpires"
+                },
+                "refreshTokenHash": {
+                  "column": "refreshTokenHash"
+                },
+                "sessionVersion": {
+                  "column": "sessionVersion"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -134,6 +164,25 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
+                "refreshTokenExpires": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "refreshTokenHash": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "sessionVersion": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nullable": false
+                },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
@@ -157,6 +206,11 @@
                   "columns": [
                     "email"
                   ]
+                },
+                {
+                  "columns": [
+                    "refreshTokenHash"
+                  ]
                 }
               ]
             }
@@ -166,7 +220,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "b280196ff6f231952c358d8a6569a8047d004e17bc2c9a66dfbff6cdaa0c6ee6"
+    "storageHash": "8fd7aa31bae352f4a8602b9e650ecb271ec08e3c3526d7bd5f3a45b170260033"
   },
   "execution": {
     "executionHash": "6b3ce4282744ac5421e3e9891ea67462e1e03c107ec340050f73f5d73be25846",

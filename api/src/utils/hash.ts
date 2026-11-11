@@ -2,6 +2,8 @@ import bcrypt from 'bcrypt';
 
 const SALT_ROUNDS = 10;
 
-export const hash = (value: string) => bcrypt.hash(value, SALT_ROUNDS);
+const hash = (value: string) => bcrypt.hash(value, SALT_ROUNDS);
 
-export const compareHash = (value: string, hashed: string) => bcrypt.compare(value, hashed);
+const compareHash = (value: string, hashed: string) => bcrypt.compare(value, hashed);
+
+export { hash, compareHash };

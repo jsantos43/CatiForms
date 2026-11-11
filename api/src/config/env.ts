@@ -11,4 +11,8 @@ const required = (name: string): string => {
 export const env = {
   port: Number(process.env['PORT'] ?? 3000),
   databaseUrl: required('DATABASE_URL'),
+  isProd: process.env['NODE_ENV'] === 'production',
+  jwtSecret: required('JWT_SECRET'),
+  accessTokenTtl: 15 * 60, // 15 minutes
+  refreshTokenTtl: 7 * 24 * 60 * 60, // 7 days
 };

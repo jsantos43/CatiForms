@@ -21,6 +21,10 @@ class User {
     return user;
   }
 
+  static async findActiveSession(id: string, sessionVersion: number) {
+    return users().first({ id, sessionVersion });
+  }
+
   static async create(data: CreateUserData) {
     const password = await hash(data.password);
 
