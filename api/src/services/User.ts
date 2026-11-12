@@ -4,13 +4,11 @@ import type { CreateUserData, UpdateUserData } from '../schemas/User.js';
 import { hash } from '../utils/hash.js';
 
 const users = () =>
-  db.orm.public.User.select('id', 'email', 'username', 'name', 'createdAt', 'updatedAt');
+  db.orm.public.User.select('id', 'email', 'username', 'name', 'admin', 'createdAt', 'updatedAt');
 
 class User {
   static async readAll() {
-    const allUsers = await users().all();
-
-    return allUsers;
+    return await users().all();
   }
 
   static async readById(id: string) {

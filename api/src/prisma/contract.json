@@ -15,6 +15,13 @@
         "models": {
           "User": {
             "fields": {
+              "admin": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -89,6 +96,9 @@
             "relations": {},
             "storage": {
               "fields": {
+                "admin": {
+                  "column": "admin"
+                },
                 "createdAt": {
                   "column": "createdAt"
                 },
@@ -135,6 +145,15 @@
           "table": {
             "User": {
               "columns": {
+                "admin": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nullable": false
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
@@ -220,7 +239,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "8fd7aa31bae352f4a8602b9e650ecb271ec08e3c3526d7bd5f3a45b170260033"
+    "storageHash": "cf775a894d567592a4bdd0d06ed21fc3b06fbbac0899bc158ed6d22debd452d7"
   },
   "execution": {
     "executionHash": "6b3ce4282744ac5421e3e9891ea67462e1e03c107ec340050f73f5d73be25846",

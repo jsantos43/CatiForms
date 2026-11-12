@@ -112,7 +112,7 @@ class Auth {
       case 'self':
         return id === user.id;
       case 'admin':
-        return false;
+        return user.admin;
     }
   }
 }

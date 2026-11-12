@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'8fd7aa31bae352f4a8602b9e650ecb271ec08e3c3526d7bd5f3a45b170260033'>;
+  StorageHashBase<'cf775a894d567592a4bdd0d06ed21fc3b06fbbac0899bc158ed6d22debd452d7'>;
 export type ExecutionHash =
   ExecutionHashBase<'6b3ce4282744ac5421e3e9891ea67462e1e03c107ec340050f73f5d73be25846'>;
 export type ProfileHash =
@@ -310,6 +310,7 @@ export type StorageColumnInputTypes = ColumnTypesFromStorage<
 
 export namespace Models {
   export type public_User = {
+    admin: FieldOutputTypes['public']['User']['admin'];
     createdAt: FieldOutputTypes['public']['User']['createdAt'];
     email: FieldOutputTypes['public']['User']['email'];
     id: FieldOutputTypes['public']['User']['id'];
@@ -350,6 +351,16 @@ type ContractBase = Omit<
           readonly table: {
             readonly User: {
               columns: {
+                readonly admin: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                  readonly many: false;
+                };
                 readonly createdAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
@@ -443,6 +454,10 @@ type ContractBase = Omit<
         readonly models: {
           readonly User: {
             readonly fields: {
+              readonly admin: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -498,6 +513,7 @@ type ContractBase = Omit<
               readonly table: 'User';
               readonly namespaceId: 'public';
               readonly fields: {
+                readonly admin: { readonly column: 'admin' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly email: { readonly column: 'email' };
                 readonly id: { readonly column: 'id' };

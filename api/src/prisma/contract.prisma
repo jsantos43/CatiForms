@@ -6,6 +6,8 @@ model User {
   username            String?
   name                String?
   password            String
+  // Só pode ser alterado direto no banco; nenhuma rota da API muda este campo.
+  admin               Boolean            @default(false)
   // Incrementado no logout: invalida todos os tokens emitidos antes.
   sessionVersion      Int                @default(0)
   // Guardamos só o hash (SHA-256) do refresh token, nunca o token em si.
