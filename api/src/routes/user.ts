@@ -7,17 +7,50 @@ import { createUserSchema, userIdSchema, updateUserSchema } from '../schemas/Use
 const router = Router();
 
 router
-  .get('/user', auth('logged'), Controller.readAll)
-  .get('/user/all', auth('admin'), Controller.readAll)
-  .get('/user/:id', auth('logged'), validate(userIdSchema, 'params'), Controller.readById)
-  .post('/user', validate(createUserSchema), Controller.create)
+  .get(
+    '/user', 
+    auth('logged'),
+    Controller.readSelf
+  )
+  .get(
+    '/user/all', 
+    auth('admin'), 
+    Controller.readAll
+  )
+  .get(
+    '/user/:id', 
+    auth('logged'), 
+    validate(userIdSchema, 'params'), 
+    Controller.readById
+  )
+  .post(
+    '/user', 
+    validate(createUserSchema), 
+    Controller.create
+  )
   .put(
-    '/user/:id',
-    auth('self'),
-    validate(userIdSchema, 'params'),
+    '/user',
+    auth('logged'),
     validate(updateUserSchema),
     Controller.update,
   )
-  .delete('/user/:id', auth('self'), validate(userIdSchema, 'params'), Controller.delete);
+  .put(
+    '/user/:id',
+    auth('admin'),
+    validate(userIdSchema, 'params'),
+    validate(updateUserSchema),
+    Controller.updateOther,
+  )
+  .delete(
+    '/user',
+    auth('logged'),
+    Controller.delete
+  )
+  .delete(
+    '/user/:id', 
+    auth('admin'), 
+    validate(userIdSchema, 'params'), 
+    Controller.deleteOther
+  );
 
 export default router;
