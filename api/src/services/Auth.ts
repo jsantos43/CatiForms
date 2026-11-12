@@ -33,12 +33,12 @@ class Auth {
     }
   }
 
-  static async login(email: string, password: string) {
-    const user = await users().first({ email });
+  static async login(username: string, password: string) {
+    const user = await users().first({ username });
 
     const passwordMatches = await compareHash(password, user?.password || DUMMY_HASH);
 
-    if (!user || !passwordMatches) throw new Unauthorized('Email or password is invalid');
+    if (!user || !passwordMatches) throw new Unauthorized('Username or password is invalid');
 
     const refreshToken = generateRandomToken();
 

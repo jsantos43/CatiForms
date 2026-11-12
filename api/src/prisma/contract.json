@@ -86,7 +86,7 @@
                 }
               },
               "username": {
-                "nullable": true,
+                "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -210,7 +210,7 @@
                 "username": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
-                  "nullable": true
+                  "nullable": false
                 }
               },
               "foreignKeys": [],
@@ -228,6 +228,11 @@
                 },
                 {
                   "columns": [
+                    "username"
+                  ]
+                },
+                {
+                  "columns": [
                     "refreshTokenHash"
                   ]
                 }
@@ -239,7 +244,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "cf775a894d567592a4bdd0d06ed21fc3b06fbbac0899bc158ed6d22debd452d7"
+    "storageHash": "f05cf7de824f0dc4a9ba71cedabb9fa2d3dcb161b0484506dc2ecf593e7c9299"
   },
   "execution": {
     "executionHash": "6b3ce4282744ac5421e3e9891ea67462e1e03c107ec340050f73f5d73be25846",

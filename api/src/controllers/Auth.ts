@@ -34,7 +34,7 @@ class Auth {
   ) {
     try {
       const { user, accessToken, refreshToken } = await Service.login(
-        req.body.email,
+        req.body.username,
         req.body.password,
       );
 

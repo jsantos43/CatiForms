@@ -3,7 +3,7 @@
 model User {
   id                  Uuid               @id @onCreate(uuid(7))
   email               String             @unique
-  username            String?
+  username            String             @unique
   name                String?
   password            String
   // Só pode ser alterado direto no banco; nenhuma rota da API muda este campo.

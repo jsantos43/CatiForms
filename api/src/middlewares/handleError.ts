@@ -1,7 +1,16 @@
 import type { NextFunction, Request, Response } from 'express';
 import Base from '../errors/Base.js';
+import Conflict from '../errors/Conflict.js';
+import { uniqueViolationField } from '../utils/dbErrors.js';
 
 const handleError = (err: Error, req: Request, res: Response, next: NextFunction) => {
+  const duplicatedField = uniqueViolationField(err);
+
+  if (duplicatedField !== undefined) {
+    const details = duplicatedField ? `${duplicatedField} is already in use` : [];
+    return new Conflict(details).send(res);
+  }
+
   const isAppError = err instanceof Base;
 
   if (!isAppError) {
