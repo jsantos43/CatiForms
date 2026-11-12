@@ -15,4 +15,50 @@ model User {
   refreshTokenExpires TimestamptzString?
   createdAt           TimestamptzString  @default(now())
   updatedAt           TimestamptzString  @onCreate(now()) @onUpdate(now())
+
+  forms Form[]
+}
+
+enum QuestionType {
+  TEXT                    // discursiva
+  MULTIPLE_CHOICE         // múltipla escolha
+  SINGLE_CHOICE_JUSTIFIED // escolha única com justificativa obrigatória
+}
+
+model Form {
+  id           Uuid              @id @onCreate(uuid(7))
+  title        String
+  description  String?
+  collectEmail Boolean           @default(false)
+  authorId     Uuid
+  author       User              @relation(fields: [authorId], references: [id])
+  createdAt    TimestamptzString @default(now())
+
+  questions Question[]
+
+  @@index([authorId])
+}
+
+model Question {
+  id       Uuid         @id @onCreate(uuid(7))
+  formId   Uuid
+  form     Form         @relation(fields: [formId], references: [id])
+  type     QuestionType
+  title    String
+
+  position Int
+
+  options Option[]
+
+  @@unique([formId, position])
+}
+
+model Option {
+  id         Uuid     @id @onCreate(uuid(7))
+  questionId Uuid
+  question   Question @relation(fields: [questionId], references: [id])
+  label      String
+  position   Int
+
+  @@unique([questionId, position])
 }

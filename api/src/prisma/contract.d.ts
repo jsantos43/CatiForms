@@ -23,9 +23,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'f05cf7de824f0dc4a9ba71cedabb9fa2d3dcb161b0484506dc2ecf593e7c9299'>;
+  StorageHashBase<'6248678b0884758195233091bbcf6d812ebe9b16e438db486b560a11f348c3d8'>;
 export type ExecutionHash =
-  ExecutionHashBase<'6b3ce4282744ac5421e3e9891ea67462e1e03c107ec340050f73f5d73be25846'>;
+  ExecutionHashBase<'e226e48f2358c5f0f4515e2320dfbd35b6935588d972497c0e40e91c28b210c4'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -275,7 +275,18 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
   : Encoded;
 type ParameterizedOutputTypeFunctions = PgParameterizedOutputTypes;
 
-type FieldTypeOverrides = {};
+type FieldTypeOverrides = {
+  readonly public: {
+    readonly models: {
+      readonly Question: {
+        readonly type: {
+          readonly output: 'TEXT' | 'MULTIPLE_CHOICE' | 'SINGLE_CHOICE_JUSTIFIED';
+          readonly input: 'TEXT' | 'MULTIPLE_CHOICE' | 'SINGLE_CHOICE_JUSTIFIED';
+        };
+      };
+    };
+  };
+};
 export type FieldOutputTypes = FieldTypesFromDomain<
   ContractBase['domain']['namespaces'],
   CodecTypes,
@@ -292,7 +303,16 @@ export type FieldInputTypes = FieldTypesFromDomain<
   'input',
   ContractBase['storage']['namespaces']
 >;
-type ColumnTypeOverrides = {};
+type ColumnTypeOverrides = {
+  readonly public: {
+    readonly Question: {
+      readonly type: {
+        readonly output: 'TEXT' | 'MULTIPLE_CHOICE' | 'SINGLE_CHOICE_JUSTIFIED';
+        readonly input: 'TEXT' | 'MULTIPLE_CHOICE' | 'SINGLE_CHOICE_JUSTIFIED';
+      };
+    };
+  };
+};
 export type StorageColumnTypes = ColumnTypesFromStorage<
   ContractBase['storage'],
   CodecTypes,
@@ -309,6 +329,35 @@ export type StorageColumnInputTypes = ColumnTypesFromStorage<
 >;
 
 export namespace Models {
+  export type public_Form = {
+    authorId: FieldOutputTypes['public']['Form']['authorId'];
+    collectEmail: FieldOutputTypes['public']['Form']['collectEmail'];
+    createdAt: FieldOutputTypes['public']['Form']['createdAt'];
+    description: FieldOutputTypes['public']['Form']['description'];
+    id: FieldOutputTypes['public']['Form']['id'];
+    title: FieldOutputTypes['public']['Form']['title'];
+    author: public_User;
+    questions: public_Question[];
+    readonly [RelationKeys]?: 'author' | 'questions';
+  };
+  export type public_Option = {
+    id: FieldOutputTypes['public']['Option']['id'];
+    label: FieldOutputTypes['public']['Option']['label'];
+    position: FieldOutputTypes['public']['Option']['position'];
+    questionId: FieldOutputTypes['public']['Option']['questionId'];
+    question: public_Question;
+    readonly [RelationKeys]?: 'question';
+  };
+  export type public_Question = {
+    formId: FieldOutputTypes['public']['Question']['formId'];
+    id: FieldOutputTypes['public']['Question']['id'];
+    position: FieldOutputTypes['public']['Question']['position'];
+    title: FieldOutputTypes['public']['Question']['title'];
+    type: FieldOutputTypes['public']['Question']['type'];
+    form: public_Form;
+    options: public_Option[];
+    readonly [RelationKeys]?: 'form' | 'options';
+  };
   export type public_User = {
     admin: FieldOutputTypes['public']['User']['admin'];
     createdAt: FieldOutputTypes['public']['User']['createdAt'];
@@ -321,12 +370,16 @@ export namespace Models {
     sessionVersion: FieldOutputTypes['public']['User']['sessionVersion'];
     updatedAt: FieldOutputTypes['public']['User']['updatedAt'];
     username: FieldOutputTypes['public']['User']['username'];
-    readonly [RelationKeys]?: never;
+    forms: public_Form[];
+    readonly [RelationKeys]?: 'forms';
   };
 }
 
 export declare const models: {
   public: {
+    Form: Models.public_Form;
+    Option: Models.public_Option;
+    Question: Models.public_Question;
     User: Models.public_User;
   };
 };
@@ -349,6 +402,185 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
+            readonly Form: {
+              columns: {
+                readonly authorId: {
+                  readonly dataType: 'pg/uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly collectEmail: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                  readonly many: false;
+                };
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly description: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly title: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'Form_authorId_idx_e47547ed';
+                  readonly prefix: 'Form_authorId_idx';
+                  readonly columns: readonly ['authorId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Form';
+                    readonly columns: readonly ['authorId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly Option: {
+              columns: {
+                readonly id: {
+                  readonly dataType: 'pg/uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly label: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly position: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly questionId: {
+                  readonly dataType: 'pg/uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['questionId', 'position'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'Option_questionId_idx_fdb42076';
+                  readonly prefix: 'Option_questionId_idx';
+                  readonly columns: readonly ['questionId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Option';
+                    readonly columns: readonly ['questionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Question';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly Question: {
+              columns: {
+                readonly formId: {
+                  readonly dataType: 'pg/uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly position: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly title: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly type: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['formId', 'position'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'Question_formId_idx_3c13a9fa';
+                  readonly prefix: 'Question_formId_idx';
+                  readonly columns: readonly ['formId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Question';
+                    readonly columns: readonly ['formId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Form';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly User: {
               columns: {
                 readonly admin: {
@@ -437,6 +669,12 @@ type ContractBase = Omit<
               foreignKeys: readonly [];
             };
           };
+          readonly valueSet: {
+            readonly QuestionType: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['TEXT', 'MULTIPLE_CHOICE', 'SINGLE_CHOICE_JUSTIFIED'];
+            };
+          };
         };
       };
     };
@@ -447,12 +685,181 @@ type ContractBase = Omit<
   readonly target: 'postgres';
   readonly targetFamily: 'sql';
   readonly roots: {
+    readonly Form: { readonly namespace: 'public' & NamespaceId; readonly model: 'Form' };
+    readonly Option: { readonly namespace: 'public' & NamespaceId; readonly model: 'Option' };
+    readonly Question: { readonly namespace: 'public' & NamespaceId; readonly model: 'Question' };
     readonly User: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
   };
   readonly domain: {
     readonly namespaces: {
       readonly public: {
         readonly models: {
+          readonly Form: {
+            readonly fields: {
+              readonly authorId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly collectEmail: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly description: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly title: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly author: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['authorId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly questions: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Question';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['formId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'Form';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly authorId: { readonly column: 'authorId' };
+                readonly collectEmail: { readonly column: 'collectEmail' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly description: { readonly column: 'description' };
+                readonly id: { readonly column: 'id' };
+                readonly title: { readonly column: 'title' };
+              };
+            };
+          };
+          readonly Option: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly label: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly position: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly questionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+            };
+            readonly relations: {
+              readonly question: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Question';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['questionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'Option';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly label: { readonly column: 'label' };
+                readonly position: { readonly column: 'position' };
+                readonly questionId: { readonly column: 'questionId' };
+              };
+            };
+          };
+          readonly Question: {
+            readonly fields: {
+              readonly formId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly position: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly title: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly form: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Form' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['formId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly options: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Option';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['questionId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'Question';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly formId: { readonly column: 'formId' };
+                readonly id: { readonly column: 'id' };
+                readonly position: { readonly column: 'position' };
+                readonly title: { readonly column: 'title' };
+                readonly type: { readonly column: 'type' };
+              };
+            };
+          };
           readonly User: {
             readonly fields: {
               readonly admin: {
@@ -509,7 +916,16 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
             };
-            readonly relations: Record<string, never>;
+            readonly relations: {
+              readonly forms: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Form' };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['authorId'];
+                };
+              };
+            };
             readonly storage: {
               readonly table: 'User';
               readonly namespaceId: 'public';
@@ -528,6 +944,26 @@ type ContractBase = Omit<
               };
             };
           };
+        };
+        readonly enum: {
+          readonly QuestionType: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'TEXT'; readonly value: 'TEXT' },
+              { readonly name: 'MULTIPLE_CHOICE'; readonly value: 'MULTIPLE_CHOICE' },
+              {
+                readonly name: 'SINGLE_CHOICE_JUSTIFIED';
+                readonly value: 'SINGLE_CHOICE_JUSTIFIED';
+              },
+            ];
+          };
+        };
+        readonly enumMemberTypes?: {
+          readonly QuestionType: readonly [
+            { readonly name: 'TEXT'; readonly value: 'TEXT' },
+            { readonly name: 'MULTIPLE_CHOICE'; readonly value: 'MULTIPLE_CHOICE' },
+            { readonly name: 'SINGLE_CHOICE_JUSTIFIED'; readonly value: 'SINGLE_CHOICE_JUSTIFIED' },
+          ];
         };
       };
     };
@@ -564,6 +1000,30 @@ type ContractBase = Omit<
     readonly executionHash: ExecutionHash;
     readonly mutations: {
       readonly defaults: readonly [
+        {
+          readonly onCreate: { readonly id: 'uuidv7'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'Form';
+            readonly field: 'id';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'uuidv7'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'Option';
+            readonly field: 'id';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'uuidv7'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'Question';
+            readonly field: 'id';
+            readonly namespace: 'public';
+          };
+        },
         {
           readonly onCreate: { readonly id: 'uuidv7'; readonly kind: 'generator' };
           readonly ref: {

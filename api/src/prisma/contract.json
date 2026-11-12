@@ -4,6 +4,18 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "Form": {
+      "model": "Form",
+      "namespace": "public"
+    },
+    "Option": {
+      "model": "Option",
+      "namespace": "public"
+    },
+    "Question": {
+      "model": "Question",
+      "namespace": "public"
+    },
     "User": {
       "model": "User",
       "namespace": "public"
@@ -12,7 +24,296 @@
   "domain": {
     "namespaces": {
       "public": {
+        "enum": {
+          "QuestionType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "TEXT",
+                "value": "TEXT"
+              },
+              {
+                "name": "MULTIPLE_CHOICE",
+                "value": "MULTIPLE_CHOICE"
+              },
+              {
+                "name": "SINGLE_CHOICE_JUSTIFIED",
+                "value": "SINGLE_CHOICE_JUSTIFIED"
+              }
+            ]
+          }
+        },
         "models": {
+          "Form": {
+            "fields": {
+              "authorId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "collectEmail": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "description": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "title": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "author": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "authorId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "questions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "formId"
+                  ]
+                },
+                "to": {
+                  "model": "Question",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "authorId": {
+                  "column": "authorId"
+                },
+                "collectEmail": {
+                  "column": "collectEmail"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "title": {
+                  "column": "title"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Form"
+            }
+          },
+          "Option": {
+            "fields": {
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "label": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "position": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "questionId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "question": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "questionId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Question",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "id": {
+                  "column": "id"
+                },
+                "label": {
+                  "column": "label"
+                },
+                "position": {
+                  "column": "position"
+                },
+                "questionId": {
+                  "column": "questionId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Option"
+            }
+          },
+          "Question": {
+            "fields": {
+              "formId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "position": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "title": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "QuestionType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              }
+            },
+            "relations": {
+              "form": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "formId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Form",
+                  "namespace": "public"
+                }
+              },
+              "options": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "questionId"
+                  ]
+                },
+                "to": {
+                  "model": "Option",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "formId": {
+                  "column": "formId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "position": {
+                  "column": "position"
+                },
+                "title": {
+                  "column": "title"
+                },
+                "type": {
+                  "column": "type"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Question"
+            }
+          },
           "User": {
             "fields": {
               "admin": {
@@ -93,7 +394,23 @@
                 }
               }
             },
-            "relations": {},
+            "relations": {
+              "forms": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "authorId"
+                  ]
+                },
+                "to": {
+                  "model": "Form",
+                  "namespace": "public"
+                }
+              }
+            },
             "storage": {
               "fields": {
                 "admin": {
@@ -143,6 +460,239 @@
       "public": {
         "entries": {
           "table": {
+            "Form": {
+              "columns": {
+                "authorId": {
+                  "codecId": "pg/uuid@1",
+                  "dataType": "pg/uuid",
+                  "nullable": false
+                },
+                "collectEmail": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "dataType": "pg/uuid",
+                  "nullable": false
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Form_authorId_idx_e47547ed"
+                  },
+                  "source": {
+                    "columns": [
+                      "authorId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Form"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "authorId"
+                  ],
+                  "name": "Form_authorId_idx_e47547ed",
+                  "prefix": "Form_authorId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "Option": {
+              "columns": {
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "dataType": "pg/uuid",
+                  "nullable": false
+                },
+                "label": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "position": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "questionId": {
+                  "codecId": "pg/uuid@1",
+                  "dataType": "pg/uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Option_questionId_idx_fdb42076"
+                  },
+                  "source": {
+                    "columns": [
+                      "questionId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Option"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Question"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "questionId"
+                  ],
+                  "name": "Option_questionId_idx_fdb42076",
+                  "prefix": "Option_questionId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "questionId",
+                    "position"
+                  ]
+                }
+              ]
+            },
+            "Question": {
+              "checks": [
+                {
+                  "expression": "\"type\" IN ('TEXT', 'MULTIPLE_CHOICE', 'SINGLE_CHOICE_JUSTIFIED')",
+                  "name": "Question_type_check_8dd5e677",
+                  "prefix": "Question_type_check"
+                }
+              ],
+              "columns": {
+                "formId": {
+                  "codecId": "pg/uuid@1",
+                  "dataType": "pg/uuid",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "dataType": "pg/uuid",
+                  "nullable": false
+                },
+                "position": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "QuestionType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Question_formId_idx_3c13a9fa"
+                  },
+                  "source": {
+                    "columns": [
+                      "formId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Question"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Form"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "formId"
+                  ],
+                  "name": "Question_formId_idx_3c13a9fa",
+                  "prefix": "Question_formId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "formId",
+                    "position"
+                  ]
+                }
+              ]
+            },
             "User": {
               "columns": {
                 "admin": {
@@ -238,18 +788,61 @@
                 }
               ]
             }
+          },
+          "valueSet": {
+            "QuestionType": {
+              "kind": "valueSet",
+              "values": [
+                "TEXT",
+                "MULTIPLE_CHOICE",
+                "SINGLE_CHOICE_JUSTIFIED"
+              ]
+            }
           }
         },
         "id": "public",
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f05cf7de824f0dc4a9ba71cedabb9fa2d3dcb161b0484506dc2ecf593e7c9299"
+    "storageHash": "6248678b0884758195233091bbcf6d812ebe9b16e438db486b560a11f348c3d8"
   },
   "execution": {
-    "executionHash": "6b3ce4282744ac5421e3e9891ea67462e1e03c107ec340050f73f5d73be25846",
+    "executionHash": "e226e48f2358c5f0f4515e2320dfbd35b6935588d972497c0e40e91c28b210c4",
     "mutations": {
       "defaults": [
+        {
+          "onCreate": {
+            "id": "uuidv7",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "Form",
+            "field": "id",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv7",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "Option",
+            "field": "id",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv7",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "Question",
+            "field": "id",
+            "namespace": "public"
+          }
+        },
         {
           "onCreate": {
             "id": "uuidv7",
