@@ -65,8 +65,3 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
 
   return data as T;
 }
-
-// A API responde 404 "Route <MÉTODO> <caminho> not found" quando a rota ainda não existe
-// (api/src/middlewares/handleNotFound.ts). Diferente de 404 de item inexistente.
-export const isMissingRoute = (err: unknown) =>
-  err instanceof ApiError && err.status === 404 && err.details.some((d) => d.startsWith('Route '));

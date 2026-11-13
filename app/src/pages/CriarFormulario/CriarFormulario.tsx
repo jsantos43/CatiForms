@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { createForm, deleteForm } from '../../api/forms';
+import { createForm, deleteForm, publishForm } from '../../api/forms';
 import { createQuestion } from '../../api/questions';
 import type { QuestionType } from '../../api/types';
 import { Alert } from '../../components/Alert';
@@ -126,7 +126,13 @@ export default function CriarFormulario() {
         await createQuestion(form.id, toQuestionPayload(q, position));
       }
 
-      navigate(`/formularios/${form.id}/publicado`, { replace: true, state: { title: form.title } });
+      // Só depois de todas as perguntas criadas: publicado, o formulário fica travado (RN07).
+      const published = await publishForm(form.id);
+
+      navigate(`/formularios/${form.id}/publicado`, {
+        replace: true,
+        state: { title: published.title, slug: published.slug },
+      });
     } catch {
       // Formulários não podem ser editados depois de publicados (RN07): desfaz o que foi criado
       // para não deixar um formulário pela metade.

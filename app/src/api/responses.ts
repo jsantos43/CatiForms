@@ -1,46 +1,30 @@
-// Respostas de formulários.
-//
-// ATENÇÃO: estas rotas ainda NÃO existem na API. O contrato abaixo é uma proposta;
-// quando a API implementar, ajuste só este arquivo (os tipos em ./types.ts e as chamadas).
-//
-//   GET  /public/forms/:id     → { form: PublicForm }            (sem login, RF09)
-//   POST /forms/:id/responses  ← ResponseInput → { response }    (sem login, RF10/RF11/RF13)
-//   GET  /forms/:id/responses  → { responses: FormResponse[] }   (logado, RF14)
+import { request } from './client';
+import type { Answer, FormResponse, PublicForm } from './types';
 
-import { getForm } from './forms';
-import { isMissingRoute, request } from './client';
-import type { FormResponse, PublicForm } from './types';
-
-export type AnswerInput =
-  | { questionId: string; text: string }
-  | { questionId: string; optionIds: string[] }
-  | { questionId: string; optionId: string; justification: string };
+// Corpo do POST /f/:slug/responses. Mesmo formato das respostas devolvidas pela API.
+export type AnswerInput = Answer;
 
 export type ResponseInput = {
   email: string | null;
   answers: AnswerInput[];
 };
 
-export const getPublicForm = async (id: string): Promise<PublicForm> => {
-  try {
-    const res = await request<{ form: PublicForm }>(`/public/forms/${id}`);
-    return res.form;
-  } catch (err) {
-    // TEMPORÁRIO: sem a rota pública, usa a rota logada (funciona para o dono do formulário),
-    // para a página de resposta já poder ser usada e testada.
-    if (isMissingRoute(err)) return getForm(id);
-    throw err;
-  }
+// Rotas públicas (sem login, RF09): o formulário é identificado pelo slug do link.
+export const getPublicForm = async (slug: string) => {
+  const res = await request<{ form: PublicForm }>(`/f/${slug}`, { skipRefresh: true });
+  return res.form;
 };
 
-export const submitResponse = async (formId: string, data: ResponseInput) => {
-  const res = await request<{ response: FormResponse }>(`/forms/${formId}/responses`, {
+export const submitResponse = async (slug: string, data: ResponseInput) => {
+  const res = await request<{ response: FormResponse }>(`/f/${slug}/responses`, {
     method: 'POST',
     body: data,
+    skipRefresh: true,
   });
   return res.response;
 };
 
+// Rota logada (RF14).
 export const listResponses = async (formId: string) => {
   const res = await request<{ responses: FormResponse[] }>(`/forms/${formId}/responses`);
   return res.responses;

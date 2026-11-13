@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { isMissingRoute } from '../../api/client';
+import { ApiError } from '../../api/client';
 import { getPublicForm, submitResponse } from '../../api/responses';
 import type { PublicForm, Question } from '../../api/types';
 import { Alert } from '../../components/Alert';
@@ -64,7 +64,7 @@ export default function Responder() {
   }
 
   // key: ao trocar de formulário, o rascunho começa do zero.
-  return <ResponseForm key={load.form.id} form={load.form} />;
+  return <ResponseForm key={load.form.slug} form={load.form} />;
 }
 
 function ResponseForm({ form }: { form: PublicForm }) {
@@ -89,12 +89,12 @@ function ResponseForm({ form }: { form: PublicForm }) {
   const setAnswer = (q: Question, patch: Partial<AnswerDraft>) =>
     setDraft((d) => ({ ...d, answers: { ...d.answers, [q.id]: { ...d.answers[q.id], ...patch } } }));
 
-  const toggleOption = (q: Question, optionId: string) => {
+  const toggleOption = (q: Question, label: string) => {
     const selected = draft.answers[q.id].selected;
     setAnswer(q, {
-      selected: selected.includes(optionId)
-        ? selected.filter((id) => id !== optionId)
-        : [...selected, optionId],
+      selected: selected.includes(label)
+        ? selected.filter((l) => l !== label)
+        : [...selected, label],
     });
   };
 
@@ -115,12 +115,15 @@ function ResponseForm({ form }: { form: PublicForm }) {
 
     setSending(true);
     try {
-      await submitResponse(form.id, toResponseInput(form, draft));
-      navigate(`/f/${form.id}/enviado`, { replace: true, state: { title: form.title } });
+      await submitResponse(form.slug, toResponseInput(form, draft));
+      navigate(`/f/${form.slug}/enviado`, { replace: true, state: { title: form.title } });
     } catch (err) {
+      // A validação local cobre as regras da API; um 400/404 aqui quer dizer que o
+      // formulário mudou ou saiu do ar depois que a página foi aberta.
+      const rejected = err instanceof ApiError && (err.status === 400 || err.status === 404);
       setSendError(
-        import.meta.env.DEV && isMissingRoute(err)
-          ? 'A API ainda não tem a rota de envio de respostas (POST /forms/:id/responses).'
+        rejected
+          ? 'O formulário não aceitou estas respostas. Recarregue a página e confira as perguntas antes de enviar de novo.'
           : 'Não foi possível enviar suas respostas agora. Verifique sua conexão e tente novamente.',
       );
       setSending(false);
@@ -217,16 +220,16 @@ function ResponseForm({ form }: { form: PublicForm }) {
                 aria-label={q.title}
                 {...describe(key)}
               >
-                {q.options.map((o) => (
+                {q.options.map((o, oi) => (
                   <ChoiceOption
-                    key={o.id}
-                    id={ids.option(q, o.id)}
+                    key={o.label}
+                    id={ids.option(q, oi)}
                     type={multiple ? 'checkbox' : 'radio'}
                     name={`q-${q.id}`}
                     label={o.label}
-                    checked={a.selected.includes(o.id)}
+                    checked={a.selected.includes(o.label)}
                     onChange={() =>
-                      multiple ? toggleOption(q, o.id) : setAnswer(q, { selected: [o.id] })
+                      multiple ? toggleOption(q, o.label) : setAnswer(q, { selected: [o.label] })
                     }
                   />
                 ))}

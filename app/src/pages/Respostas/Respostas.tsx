@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type KeyboardEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ApiError, isMissingRoute } from '../../api/client';
+import { ApiError } from '../../api/client';
 import { getForm } from '../../api/forms';
 import { listResponses } from '../../api/responses';
 import type { FormDetail } from '../../api/types';
@@ -20,10 +20,8 @@ const PAGE_SIZE = 6;
 
 type FormState = { status: 'loading' } | { status: 'error'; message: string } | { status: 'ready'; form: FormDetail };
 
-// "unavailable": a API ainda não tem a rota de respostas.
 type ResponsesState =
   | { status: 'loading' }
-  | { status: 'unavailable' }
   | { status: 'error' }
   | { status: 'ready'; responses: NumberedResponse[] };
 
@@ -50,7 +48,7 @@ export default function Respostas() {
 
     listResponses(id)
       .then((list) => active && setRespState({ status: 'ready', responses: numberResponses(list) }))
-      .catch((err) => active && setRespState({ status: isMissingRoute(err) ? 'unavailable' : 'error' }));
+      .catch(() => active && setRespState({ status: 'error' }));
 
     return () => {
       active = false;
@@ -147,13 +145,15 @@ function FormResponses({ form, respState }: { form: FormDetail; respState: Respo
           </div>
         </div>
         <div className={`${styles.headerActions} no-print`}>
-          <CopyLinkButton
-            url={formShareUrl(form.id)}
-            label="Copiar link"
-            copiedLabel="Link copiado"
-            iconSize={18}
-            className={buttonClass({ variant: 'secondary' })}
-          />
+          {form.published && (
+            <CopyLinkButton
+              url={formShareUrl(form.slug)}
+              label="Copiar link"
+              copiedLabel="Link copiado"
+              iconSize={18}
+              className={buttonClass({ variant: 'secondary' })}
+            />
+          )}
           <Button variant="secondary" className={styles.outlineBlue} onClick={exportCsv} disabled={!hasResponses}>
             <DownloadIcon />
             Exportar CSV
@@ -171,22 +171,26 @@ function FormResponses({ form, respState }: { form: FormDetail; respState: Respo
         </p>
       )}
 
-      {respState.status === 'unavailable' && (
-        <Alert tone="info">
-          As respostas aparecerão aqui assim que a API passar a registrá-las. Por enquanto, os detalhes
-          do formulário já estão disponíveis acima.
-        </Alert>
-      )}
-
       {respState.status === 'error' && <Alert>Não foi possível carregar as respostas.</Alert>}
 
       {respState.status === 'ready' && !hasResponses && (
         <div className={styles.empty}>
-          <p className={styles.emptyTitle}>Nenhuma resposta ainda</p>
-          <p className={styles.muted}>Compartilhe o link do formulário para começar a receber respostas.</p>
-          <Link to={`/formularios/${form.id}/publicado`} className={buttonClass({ variant: 'soft' })}>
-            Ver link de acesso
-          </Link>
+          {form.published ? (
+            <>
+              <p className={styles.emptyTitle}>Nenhuma resposta ainda</p>
+              <p className={styles.muted}>Compartilhe o link do formulário para começar a receber respostas.</p>
+              <Link to={`/formularios/${form.id}/publicado`} className={buttonClass({ variant: 'soft' })}>
+                Ver link de acesso
+              </Link>
+            </>
+          ) : (
+            <>
+              <p className={styles.emptyTitle}>Formulário não publicado</p>
+              <p className={styles.muted}>
+                A publicação foi interrompida, então este formulário não tem link e não recebe respostas.
+              </p>
+            </>
+          )}
         </div>
       )}
 
@@ -237,7 +241,7 @@ function FormResponses({ form, respState }: { form: FormDetail; respState: Respo
                         <span className={styles.listTitle}>Resposta #{r.number}</span>
                         {form.collectEmail && <span className={styles.listEmail}>{r.email}</span>}
                       </span>
-                      <span className={styles.listDate}>{formatShortDateTime(r.createdAt)}</span>
+                      <span className={styles.listDate}>{formatShortDateTime(r.submittedAt)}</span>
                     </button>
                   );
                 })}

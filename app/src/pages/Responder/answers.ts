@@ -7,7 +7,7 @@ import type { PublicForm, Question } from '../../api/types';
 // Mesmo formato para os três tipos; cada tipo usa só os campos que precisa.
 export type AnswerDraft = {
   text: string; // discursiva
-  selected: string[]; // ids das opções (escolha única usa só o primeiro)
+  selected: string[]; // rótulos das opções marcadas (escolha única usa só o primeiro)
   justification: string; // escolha única com justificativa
 };
 
@@ -40,7 +40,8 @@ export const errorKey = {
 export const ids = {
   email: 'r-email',
   text: (q: Question) => `r-${q.id}`,
-  option: (q: Question, optionId: string) => `r-${q.id}-${optionId}`,
+  // As opções não têm id na API: o índice identifica a opção no DOM.
+  option: (q: Question, index: number) => `r-${q.id}-opt-${index}`,
   justification: (q: Question) => `r-${q.id}-justification`,
   error: (key: string) => `err-${key.replace(':', '-')}`,
 };
@@ -52,7 +53,7 @@ export const focusTarget = (form: PublicForm, key: string) => {
   if (!q) return null;
   if (part === 'justification') return ids.justification(q);
   if (q.type === 'TEXT') return ids.text(q);
-  return q.options[0] ? ids.option(q, q.options[0].id) : null;
+  return q.options.length > 0 ? ids.option(q, 0) : null;
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -91,21 +92,23 @@ export const validateResponse = (form: PublicForm, draft: ResponseDraft): Respon
   return errors;
 };
 
+// Corpo do POST /f/:slug/responses (formato em api/src/schemas/Response.ts).
 export const toResponseInput = (form: PublicForm, draft: ResponseDraft): ResponseInput => ({
   email: form.collectEmail ? draft.email.trim() : null,
   answers: form.questions.map((q) => {
     const a = draft.answers[q.id] ?? emptyAnswer();
     switch (q.type) {
       case 'TEXT':
-        return { questionId: q.id, text: a.text.trim() };
+        return { questionId: q.id, text: a.text.trim(), choices: [] };
       case 'MULTIPLE_CHOICE':
         // Mantém a ordem das opções no formulário, não a ordem dos cliques.
         return {
           questionId: q.id,
-          optionIds: q.options.filter((o) => a.selected.includes(o.id)).map((o) => o.id),
+          text: null,
+          choices: q.options.filter((o) => a.selected.includes(o.label)).map((o) => o.label),
         };
       case 'SINGLE_CHOICE_JUSTIFIED':
-        return { questionId: q.id, optionId: a.selected[0], justification: a.justification.trim() };
+        return { questionId: q.id, text: a.justification.trim(), choices: a.selected.slice(0, 1) };
     }
   }),
 });

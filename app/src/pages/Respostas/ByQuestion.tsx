@@ -1,6 +1,6 @@
 import type { FormDetail } from '../../api/types';
 import { plural } from '../../lib/format';
-import { answerFor, type NumberedResponse } from './model';
+import { answerFor, justificationOf, type NumberedResponse } from './model';
 import { TypeBadge } from './ResponseDetail';
 import styles from './Respostas.module.css';
 
@@ -26,10 +26,10 @@ export function ByQuestion({ form, responses }: { form: FormDetail; responses: N
             {q.type !== 'TEXT' && (
               <ul className={styles.bars}>
                 {q.options.map((o) => {
-                  const count = answers.filter(({ a }) => a?.optionIds.includes(o.id)).length;
+                  const count = answers.filter(({ a }) => a?.choices.includes(o.label)).length;
                   const pct = total ? Math.round((count / total) * 100) : 0;
                   return (
-                    <li key={o.id} className={styles.bar}>
+                    <li key={o.label} className={styles.bar}>
                       <div className={styles.barLabel}>
                         <span>{o.label}</span>
                         <span className={styles.muted}>
@@ -56,7 +56,7 @@ export function ByQuestion({ form, responses }: { form: FormDetail; responses: N
                   {answers.map(({ r, a }) => (
                     <li key={r.id}>
                       <span className={styles.textAuthor}>#{r.number}</span>
-                      <p>{(q.type === 'TEXT' ? a?.text : a?.justification) || '—'}</p>
+                      <p>{(q.type === 'TEXT' ? a?.text : justificationOf(a)) || '—'}</p>
                     </li>
                   ))}
                 </ul>

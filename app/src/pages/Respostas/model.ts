@@ -7,15 +7,19 @@ export type NumberedResponse = FormResponse & { number: number };
 // Mais recentes primeiro; o número segue a ordem de chegada.
 export const numberResponses = (responses: FormResponse[]): NumberedResponse[] =>
   [...responses]
-    .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+    .sort((a, b) => a.submittedAt.localeCompare(b.submittedAt))
     .map((r, i) => ({ ...r, number: i + 1 }))
     .reverse();
 
 export const answerFor = (response: FormResponse, question: Question): Answer | undefined =>
   response.answers.find((a) => a.questionId === question.id);
 
+// Opções marcadas, na ordem do formulário. A API guarda o rótulo da opção em `choices`.
 export const optionLabels = (question: Question, answer?: Answer) =>
-  question.options.filter((o) => answer?.optionIds.includes(o.id)).map((o) => o.label);
+  question.options.filter((o) => answer?.choices.includes(o.label)).map((o) => o.label);
+
+// Na escolha única com justificativa, `text` é a justificativa.
+export const justificationOf = (answer?: Answer) => answer?.text ?? null;
 
 // ---------- CSV (RF15) ----------
 
@@ -37,13 +41,13 @@ export const buildCsv = (form: FormDetail, responses: NumberedResponse[]) => {
 
   // Na planilha, ordem de chegada (#1 primeiro).
   const rows = [...responses].reverse().map((r) => {
-    const row: (string | number | null)[] = [r.number, formatDateTime(r.createdAt)];
+    const row: (string | number | null)[] = [r.number, formatDateTime(r.submittedAt)];
     if (form.collectEmail) row.push(r.email);
     for (const q of form.questions) {
       const a = answerFor(r, q);
       if (q.type === 'TEXT') row.push(a?.text ?? '');
       else row.push(optionLabels(q, a).join(', '));
-      if (q.type === 'SINGLE_CHOICE_JUSTIFIED') row.push(a?.justification ?? '');
+      if (q.type === 'SINGLE_CHOICE_JUSTIFIED') row.push(justificationOf(a) ?? '');
     }
     return row;
   });

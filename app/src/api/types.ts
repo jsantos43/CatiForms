@@ -12,10 +12,9 @@ export type User = {
 
 export type QuestionType = 'TEXT' | 'MULTIPLE_CHOICE' | 'SINGLE_CHOICE_JUSTIFIED';
 
+// As opções não têm id: a API guarda só o rótulo, e as respostas referenciam a opção pelo rótulo.
 export type Option = {
-  id: string;
   label: string;
-  position: number;
 };
 
 export type Question = {
@@ -37,6 +36,9 @@ export type Form = {
   title: string;
   description: string | null;
   collectEmail: boolean;
+  published: boolean;
+  // Código do link público (/f/:slug).
+  slug: string;
   authorId: string;
   createdAt: string;
 };
@@ -44,6 +46,7 @@ export type Form = {
 export type FormSummary = Form & {
   author: Author;
   questions: number;
+  responses: number;
 };
 
 export type FormDetail = Form & {
@@ -59,22 +62,25 @@ export type ApiErrorBody = {
   details: string[];
 };
 
-// Formulário como o respondente vê (sem dados do autor).
-export type PublicForm = Pick<Form, 'id' | 'title' | 'description' | 'collectEmail'> & {
+// Formulário como o respondente vê (GET /f/:slug): sem id nem dados do autor.
+export type PublicForm = Pick<Form, 'slug' | 'title' | 'description' | 'collectEmail'> & {
   questions: Question[];
 };
 
-// Uma resposta à pergunta, no formato devolvido pela API.
+// Resposta a uma pergunta, como a API guarda (api/src/schemas/Response.ts):
+// - TEXT: text preenchido, choices vazio;
+// - MULTIPLE_CHOICE: choices com os rótulos marcados, text null;
+// - SINGLE_CHOICE_JUSTIFIED: choices com um rótulo e text com a justificativa.
 export type Answer = {
   questionId: string;
   text: string | null;
-  optionIds: string[];
-  justification: string | null;
+  choices: string[];
 };
 
 export type FormResponse = {
   id: string;
+  formId: string;
   email: string | null;
-  createdAt: string;
+  submittedAt: string;
   answers: Answer[];
 };

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { listForms } from '../../api/forms';
 import type { FormSummary } from '../../api/types';
+import { useAuth } from '../../auth/AuthContext';
 import { Alert } from '../../components/Alert';
 import { Button } from '../../components/Button';
 import { buttonClass } from '../../components/buttonClass';
@@ -16,6 +17,8 @@ type State =
   | { status: 'ready'; forms: FormSummary[] };
 
 export default function Formularios() {
+  const { user } = useAuth();
+  const isAdmin = !!user?.admin;
   const [state, setState] = useState<State>({ status: 'loading' });
   const [query, setQuery] = useState('');
   const [attempt, setAttempt] = useState(0);
@@ -23,14 +26,14 @@ export default function Formularios() {
   useEffect(() => {
     let active = true;
 
-    listForms()
+    listForms({ all: isAdmin })
       .then((forms) => active && setState({ status: 'ready', forms }))
       .catch(() => active && setState({ status: 'error' }));
 
     return () => {
       active = false;
     };
-  }, [attempt]);
+  }, [attempt, isAdmin]);
 
   const retry = () => {
     setState({ status: 'loading' });
@@ -53,8 +56,9 @@ export default function Formularios() {
         <div>
           <h1 className={styles.title}>Formulários</h1>
           <p className={styles.subtitle}>
-            Todos os formulários da plataforma. Qualquer usuário cadastrado pode ver os detalhes e as
-            respostas.
+            {isAdmin
+              ? 'Todos os formulários da plataforma, com as respostas de cada um.'
+              : 'Os formulários que você criou, com as respostas de cada um.'}
           </p>
         </div>
         <Link to="/formularios/novo" className={buttonClass()}>
@@ -122,21 +126,21 @@ export default function Formularios() {
                   <span role="cell" className={styles.stat} data-label="Perguntas">
                     {form.questions}
                   </span>
-                  {/* A API ainda não tem respostas; a contagem entra quando existir. */}
-                  <span
-                    role="cell"
-                    className={`${styles.muted} ${styles.stat}`}
-                    data-label="Respostas"
-                    title="Disponível quando a API registrar respostas"
-                  >
-                    —
+                  <span role="cell" className={styles.stat} data-label="Respostas">
+                    {form.responses}
                   </span>
                   <div role="cell" className={styles.actions}>
-                    <CopyLinkButton
-                      url={formShareUrl(form.id)}
-                      className={styles.linkButton}
-                      aria-label={`Copiar link do formulário ${form.title}`}
-                    />
+                    {form.published ? (
+                      <CopyLinkButton
+                        url={formShareUrl(form.slug)}
+                        className={styles.linkButton}
+                        aria-label={`Copiar link do formulário ${form.title}`}
+                      />
+                    ) : (
+                      <span className={styles.muted} title="Este formulário não recebe respostas">
+                        Não publicado
+                      </span>
+                    )}
                     <Link to={`/formularios/${form.id}`} className={styles.viewButton}>
                       Ver respostas
                     </Link>

@@ -3,8 +3,9 @@ const dateFmt = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-dig
 // "12/11/2026"
 export const formatDate = (iso: string) => dateFmt.format(new Date(iso));
 
-// Link público do formulário. Até a API ter um código próprio, o código é o id do form.
-export const formShareUrl = (formId: string) => `${window.location.origin}/f/${formId}`;
+// Link público do formulário (rota /f/:slug).
+export const formSharePath = (slug: string) => `/f/${slug}`;
+export const formShareUrl = (slug: string) => `${window.location.origin}${formSharePath(slug)}`;
 
 // Minúsculas e sem acentos, para busca.
 export const normalize = (text: string) =>

@@ -2,7 +2,7 @@ import type { FormDetail, QuestionType } from '../../api/types';
 import { CheckIcon } from '../../components/icons';
 import { formatDateTime } from '../../lib/format';
 import { QUESTION_TYPE_SHORT } from '../../lib/questionTypes';
-import { answerFor, type NumberedResponse } from './model';
+import { answerFor, justificationOf, optionLabels, type NumberedResponse } from './model';
 import styles from './Respostas.module.css';
 
 const TYPE_BADGE: Record<QuestionType, string> = {
@@ -24,7 +24,7 @@ export function ResponseDetail({ form, response }: { form: FormDetail; response:
           <h2 id={`resp-${response.id}`} className={styles.detailTitle}>
             Resposta #{response.number}
           </h2>
-          <span className={styles.muted}>Enviada em {formatDateTime(response.createdAt)}</span>
+          <span className={styles.muted}>Enviada em {formatDateTime(response.submittedAt)}</span>
         </div>
         {form.collectEmail && (
           <div className={styles.detailEmail}>
@@ -49,9 +49,9 @@ export function ResponseDetail({ form, response }: { form: FormDetail; response:
             {q.type === 'MULTIPLE_CHOICE' && (
               <div className={styles.chips}>
                 {q.options.map((o) => {
-                  const chosen = a?.optionIds.includes(o.id);
+                  const chosen = a?.choices.includes(o.label);
                   return (
-                    <span key={o.id} className={chosen ? styles.chipOn : styles.chipOff}>
+                    <span key={o.label} className={chosen ? styles.chipOn : styles.chipOff}>
                       {chosen && <CheckIcon size={14} />}
                       {o.label}
                       {chosen && <span className="visually-hidden"> (marcada)</span>}
@@ -65,11 +65,11 @@ export function ResponseDetail({ form, response }: { form: FormDetail; response:
               <>
                 <span className={styles.chipOn}>
                   <span aria-hidden="true" className={styles.dot} />
-                  {q.options.find((o) => a?.optionIds.includes(o.id))?.label ?? '—'}
+                  {optionLabels(q, a)[0] ?? '—'}
                 </span>
                 <div className={styles.readBox}>
                   <span className={styles.overline}>Justificativa</span>
-                  <p>{a?.justification || '—'}</p>
+                  <p>{justificationOf(a) || '—'}</p>
                 </div>
               </>
             )}

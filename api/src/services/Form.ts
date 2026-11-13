@@ -16,11 +16,12 @@ const formFields = [
 
 const forms = () => db.orm.public.Form.select(...formFields);
 
-// Listagem: dados do form + autor + quantidade de perguntas.
+// Listagem: dados do form + autor + quantidade de perguntas e de respostas.
 const formSummaries = () =>
   forms()
     .include('author', (author) => author.select('id', 'username', 'name'))
     .include('questions', (questions) => questions.count())
+    .include('responses', (responses) => responses.count())
     .orderBy((f) => f.createdAt.desc());
 
 class Form {
