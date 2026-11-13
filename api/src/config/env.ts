@@ -15,4 +15,7 @@ export const env = {
   jwtSecret: required('JWT_SECRET'),
   accessTokenTtl: 15 * 60, // 15 minutes
   refreshTokenTtl: 7 * 24 * 60 * 60, // 7 days
+  permissions: ['forms:read', 'forms:edit', 'forms:owner'] as const,
 };
+
+export type ResourcePermission = (typeof env.permissions)[number];

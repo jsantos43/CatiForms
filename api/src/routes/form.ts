@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import Controller from '../controllers/Forms.js';
+import Controller from '../controllers/Form.js';
 import auth from '../middlewares/auth.js';
 import validate from '../middlewares/validate.js';
 import { createFormSchema, formIdSchema, updateFormSchema } from '../schemas/Form.js';
@@ -10,7 +10,7 @@ router
   .get(
     '/forms',
     auth('logged'),
-    Controller.read
+    Controller.readOwn
   )
   .get(
     '/forms/all',
@@ -19,7 +19,7 @@ router
   )
   .get(
     '/forms/:id',
-    auth('logged'),
+    auth('forms:read'),
     validate(formIdSchema, 'params'),
     Controller.readById
   )
@@ -31,15 +31,15 @@ router
   )
   .put(
     '/forms/:id',
-    auth('logged'),
     validate(formIdSchema, 'params'),
+    auth('forms:edit'),
     validate(updateFormSchema),
     Controller.update,
   )
   .delete(
     '/forms/:id',
-    auth('logged'),
     validate(formIdSchema, 'params'),
+    auth('forms:owner'),
     Controller.delete
   );
 

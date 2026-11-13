@@ -51,5 +51,9 @@
   "overrides": {
     "@prisma/orm-toolchain": "8.0.0-rc.22",
     "@prisma/orm-framework": "8.0.0-rc.22"
+  },
+  "allowScripts": {
+    "bcrypt@6.0.0": true,
+    "esbuild@0.28.2": true
   }
 }

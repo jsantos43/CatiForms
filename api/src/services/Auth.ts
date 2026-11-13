@@ -1,14 +1,15 @@
 import jwt from 'jsonwebtoken';
-import { env } from '../config/env.js';
+import { env, type ResourcePermission } from '../config/env.js';
 import type { AuthUser } from '../types/express.js';
 import { Unauthorized } from '../errors/index.js';
 import { accessTokenPayloadSchema, type AccessTokenPayload } from '../schemas/Auth.js';
 import { db } from '../prisma/db.js';
 import { compareHash, hash } from '../utils/hash.js';
 import { generateRandomToken, hashToken, refreshExpiresAt } from '../utils/token.js';
+import Form from './Form.js';
 import User from './User.js';
 
-export type Permission = 'logged' | 'self' | 'admin';
+export type Permission = 'logged' | 'self' | 'admin' | ResourcePermission;
 
 const users = () => db.orm.public.User;
 const DUMMY_HASH = await hash(generateRandomToken());
@@ -113,6 +114,10 @@ class Auth {
         return id === user.id;
       case 'admin':
         return user.admin;
+      case 'forms:read':
+      case 'forms:edit':
+      case 'forms:owner':
+        return Form.canManage(user, id);
     }
   }
 }
