@@ -1,6 +1,11 @@
 import type { NextFunction, Request, Response } from 'express';
 import { Unauthorized } from '../errors/index.js';
-import type { CreateFormData, FormIdParams, UpdateFormData } from '../schemas/Form.js';
+import type {
+  CreateFormData,
+  FormIdParams,
+  FormSlugParams,
+  UpdateFormData,
+} from '../schemas/Form.js';
 import Service from '../services/Form.js';
 
 class Form {
@@ -29,6 +34,16 @@ class Form {
   static async readById(req: Request<FormIdParams>, res: Response, next: NextFunction) {
     try {
       const form = await Service.readById(req.params.id);
+
+      return res.status(200).json({ success: true, form });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async readPublic(req: Request<FormSlugParams>, res: Response, next: NextFunction) {
+    try {
+      const form = await Service.readPublic(req.params.slug);
 
       return res.status(200).json({ success: true, form });
     } catch (err) {

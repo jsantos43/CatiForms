@@ -6,11 +6,8 @@ model User {
   username            String             @unique
   name                String?
   password            String
-  // Só pode ser alterado direto no banco; nenhuma rota da API muda este campo.
   admin               Boolean            @default(false)
-  // Incrementado no logout: invalida todos os tokens emitidos antes.
   sessionVersion      Int                @default(0)
-  // Guardamos só o hash (SHA-256) do refresh token, nunca o token em si.
   refreshTokenHash    String?            @unique
   refreshTokenExpires TimestamptzString?
   createdAt           TimestamptzString  @default(now())
@@ -30,6 +27,8 @@ model Form {
   title        String
   description  String?
   collectEmail Boolean           @default(false)
+  published    Boolean           @default(false)
+  slug         String            @unique @onCreate(nanoid(12))
   authorId     Uuid
   author       User              @relation(fields: [authorId], references: [id])
   createdAt    TimestamptzString @default(now())
@@ -48,17 +47,13 @@ model Question {
 
   position Int
 
+  // jsonb: a ordem do array é a ordem de exibição. Questions TEXT ficam com [].
   options Option[]
 
   @@unique([formId, position])
 }
 
-model Option {
-  id         Uuid     @id @onCreate(uuid(7))
-  questionId Uuid
-  question   Question @relation(fields: [questionId], references: [id])
-  label      String
-  position   Int
-
-  @@unique([questionId, position])
+// Value object: guardado como JSON dentro de Question.options, sem tabela própria.
+type Option {
+  label String
 }

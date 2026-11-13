@@ -3,7 +3,16 @@ import { db } from '../prisma/db.js';
 import type { CreateFormData, UpdateFormData } from '../schemas/Form.js';
 import type { AuthUser } from '../types/express.js';
 
-const formFields = ['id', 'title', 'description', 'collectEmail', 'authorId', 'createdAt'] as const;
+const formFields = [
+  'id',
+  'title',
+  'description',
+  'collectEmail',
+  'published',
+  'slug',
+  'authorId',
+  'createdAt',
+] as const;
 
 const forms = () => db.orm.public.Form.select(...formFields);
 
@@ -28,13 +37,24 @@ class Form {
       .include('author', (author) => author.select('id', 'username', 'name'))
       .include('questions', (questions) =>
         questions
-          .select('id', 'type', 'title', 'position')
-          .orderBy((q) => q.position.asc())
-          .include('options', (options) =>
-            options.select('id', 'label', 'position').orderBy((o) => o.position.asc()),
-          ),
+          .select('id', 'type', 'title', 'position', 'options')
+          .orderBy((q) => q.position.asc()),
       )
       .first({ id });
+
+    if (!form) throw new NotFound('Form not found');
+
+    return form;
+  }
+  
+  static async readPublic(slug: string) {
+    const form = await db.orm.public.Form.select('slug', 'title', 'description', 'collectEmail')
+      .include('questions', (questions) =>
+        questions
+          .select('id', 'type', 'title', 'position', 'options')
+          .orderBy((q) => q.position.asc()),
+      )
+      .first({ slug, published: true });
 
     if (!form) throw new NotFound('Form not found');
 
@@ -55,13 +75,7 @@ class Form {
 
   static async delete(id: string) {
     return await db.transaction(async (tx) => {
-      const questions = await tx.orm.public.Question.select('id').where({ formId: id }).all();
-      const questionIds = questions.map((q) => q.id);
-
-      if (questionIds.length > 0) {
-        await tx.orm.public.Option.where((o) => o.questionId.in(questionIds)).deleteAll();
-        await tx.orm.public.Question.where({ formId: id }).deleteAll();
-      }
+      await tx.orm.public.Question.where({ formId: id }).deleteAll();
 
       const form = await tx.orm.public.Form.select(...formFields)
         .where({ id })

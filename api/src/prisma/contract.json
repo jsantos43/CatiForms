@@ -8,10 +8,6 @@
       "model": "Form",
       "namespace": "public"
     },
-    "Option": {
-      "model": "Option",
-      "namespace": "public"
-    },
     "Question": {
       "model": "Question",
       "namespace": "public"
@@ -81,6 +77,20 @@
                   "kind": "scalar"
                 }
               },
+              "published": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "slug": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "title": {
                 "nullable": false,
                 "type": {
@@ -139,80 +149,18 @@
                 "id": {
                   "column": "id"
                 },
+                "published": {
+                  "column": "published"
+                },
+                "slug": {
+                  "column": "slug"
+                },
                 "title": {
                   "column": "title"
                 }
               },
               "namespaceId": "public",
               "table": "Form"
-            }
-          },
-          "Option": {
-            "fields": {
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/uuid@1",
-                  "kind": "scalar"
-                }
-              },
-              "label": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "position": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "questionId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/uuid@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "question": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "questionId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Question",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "id": {
-                  "column": "id"
-                },
-                "label": {
-                  "column": "label"
-                },
-                "position": {
-                  "column": "position"
-                },
-                "questionId": {
-                  "column": "questionId"
-                }
-              },
-              "namespaceId": "public",
-              "table": "Option"
             }
           },
           "Question": {
@@ -229,6 +177,19 @@
                 "type": {
                   "codecId": "pg/uuid@1",
                   "kind": "scalar"
+                }
+              },
+              "options": {
+                "many": {
+                  "elementNullable": false
+                },
+                "nullable": false,
+                "type": {
+                  "entityKind": "valueObject",
+                  "entityName": "Option",
+                  "kind": "valueObject",
+                  "namespaceId": "public",
+                  "plane": "storage"
                 }
               },
               "position": {
@@ -275,21 +236,6 @@
                   "model": "Form",
                   "namespace": "public"
                 }
-              },
-              "options": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "questionId"
-                  ]
-                },
-                "to": {
-                  "model": "Option",
-                  "namespace": "public"
-                }
               }
             },
             "storage": {
@@ -299,6 +245,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "options": {
+                  "column": "options"
                 },
                 "position": {
                   "column": "position"
@@ -495,6 +444,20 @@
                   "dataType": "pg/uuid",
                   "nullable": false
                 },
+                "published": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nullable": false
+                },
+                "slug": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
                 "title": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -537,78 +500,21 @@
                   "id"
                 ]
               },
-              "uniques": []
-            },
-            "Option": {
-              "columns": {
-                "id": {
-                  "codecId": "pg/uuid@1",
-                  "dataType": "pg/uuid",
-                  "nullable": false
-                },
-                "label": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "nullable": false
-                },
-                "position": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                },
-                "questionId": {
-                  "codecId": "pg/uuid@1",
-                  "dataType": "pg/uuid",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "index": {
-                    "name": "Option_questionId_idx_fdb42076"
-                  },
-                  "source": {
-                    "columns": [
-                      "questionId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Option"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Question"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "questionId"
-                  ],
-                  "name": "Option_questionId_idx_fdb42076",
-                  "prefix": "Option_questionId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
               "uniques": [
                 {
                   "columns": [
-                    "questionId",
-                    "position"
+                    "slug"
                   ]
                 }
               ]
             },
             "Question": {
               "checks": [
+                {
+                  "expression": "jsonb_path_match(\"options\", 'strict $.type() == \"array\" && !exists($[*] ? (!((@.type() == \"object\" && exists(@.keyvalue() ? (@.key == \"label\" && (@.value.type() == \"string\"))) && !exists(@.keyvalue() ? (@.key != \"label\"))))))') IS TRUE",
+                  "name": "Question_options_shape_fb4ebe25",
+                  "prefix": "Question_options_shape"
+                },
                 {
                   "expression": "\"type\" IN ('TEXT', 'MULTIPLE_CHOICE', 'SINGLE_CHOICE_JUSTIFIED')",
                   "name": "Question_type_check_8dd5e677",
@@ -624,6 +530,11 @@
                 "id": {
                   "codecId": "pg/uuid@1",
                   "dataType": "pg/uuid",
+                  "nullable": false
+                },
+                "options": {
+                  "codecId": "pg/jsonb@1",
+                  "dataType": "pg/jsonb",
                   "nullable": false
                 },
                 "position": {
@@ -789,6 +700,19 @@
               ]
             }
           },
+          "valueObject": {
+            "Option": {
+              "fields": {
+                "label": {
+                  "nullable": false,
+                  "type": {
+                    "codecId": "pg/text@1",
+                    "kind": "scalar"
+                  }
+                }
+              }
+            }
+          },
           "valueSet": {
             "QuestionType": {
               "kind": "valueSet",
@@ -804,10 +728,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "6248678b0884758195233091bbcf6d812ebe9b16e438db486b560a11f348c3d8"
+    "storageHash": "4756a5a72695eed56f2fcfa49512d3be793e109a895c9d0f458bea21d7da1fd4"
   },
   "execution": {
-    "executionHash": "e226e48f2358c5f0f4515e2320dfbd35b6935588d972497c0e40e91c28b210c4",
+    "executionHash": "7e5f4472cc560f64c45ec1b935eea6c494b9326a827e94d22e5f5056a4afd965",
     "mutations": {
       "defaults": [
         {
@@ -823,12 +747,15 @@
         },
         {
           "onCreate": {
-            "id": "uuidv7",
-            "kind": "generator"
+            "id": "nanoid",
+            "kind": "generator",
+            "params": {
+              "size": 12
+            }
           },
           "ref": {
-            "entry": "Option",
-            "field": "id",
+            "entry": "Form",
+            "field": "slug",
             "namespace": "public"
           }
         },

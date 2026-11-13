@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Controller from '../controllers/Form.js';
 import auth from '../middlewares/auth.js';
 import validate from '../middlewares/validate.js';
-import { createFormSchema, formIdSchema, updateFormSchema } from '../schemas/Form.js';
+import { createFormSchema, formIdSchema, formSlugSchema, updateFormSchema } from '../schemas/Form.js';
 import question from './question.js';
 
 const router = Router();
@@ -23,6 +23,11 @@ router
     validate(formIdSchema, 'params'),
     auth('forms:read'),
     Controller.readById
+  )
+  .get(
+    '/f/:slug',
+    validate(formSlugSchema, 'params'),
+    Controller.readPublic
   )
   .post(
     '/forms',
