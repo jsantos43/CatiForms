@@ -26,7 +26,7 @@ export const updateFormSchema = z
     title: z.string().trim().min(1, 'Title is required').exactOptional(),
     description: z.string().trim().min(1).nullable().exactOptional(),
     collectEmail: z.boolean().exactOptional(),
-    published: z.boolean().exactOptional(),
+    published: z.literal(true, 'A form can only be published, not unpublished').exactOptional(),
   })
   .refine((data) => Object.keys(data).length > 0, 'Send at least one field to update');
 

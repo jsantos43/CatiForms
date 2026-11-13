@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import Controller from '../controllers/Question.js';
 import auth from '../middlewares/auth.js';
+import verifyPublished from '../middlewares/verifyPublished.js';
 import validate from '../middlewares/validate.js';
 import { formIdSchema } from '../schemas/Form.js';
 import {
@@ -29,6 +30,7 @@ router
     validate(formIdSchema, 'params'),
     auth('forms:edit'),
     validate(createQuestionSchema),
+    verifyPublished,
     Controller.create,
   )
   .put(
@@ -36,12 +38,14 @@ router
     validate(questionIdSchema, 'params'),
     auth('forms:edit'),
     validate(updateQuestionSchema),
+    verifyPublished,
     Controller.update,
   )
   .delete(
     '/:questionId',
     validate(questionIdSchema, 'params'),
     auth('forms:edit'),
+    verifyPublished,
     Controller.delete,
   );
 

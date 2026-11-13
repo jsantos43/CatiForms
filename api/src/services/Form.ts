@@ -46,7 +46,7 @@ class Form {
 
     return form;
   }
-  
+
   static async readPublic(slug: string) {
     const form = await db.orm.public.Form.select('slug', 'title', 'description', 'collectEmail')
       .include('questions', (questions) =>
@@ -85,6 +85,14 @@ class Form {
 
       return form;
     });
+  }
+
+  static async isPublished(id: string) {
+    const form = await db.orm.public.Form.select('published').first({ id });
+
+    if (!form) throw new NotFound('Form not found');
+
+    return form.published;
   }
 
   // Usado pelo middleware de auth nas permissões "forms:*".

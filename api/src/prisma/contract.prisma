@@ -34,6 +34,7 @@ model Form {
   createdAt    TimestamptzString @default(now())
 
   questions Question[]
+  responses Response[]
 
   @@index([authorId])
 }
@@ -50,10 +51,37 @@ model Question {
   // jsonb: a ordem do array é a ordem de exibição. Questions TEXT ficam com [].
   options Option[]
 
+  answers Answer[]
+
   @@unique([formId, position])
 }
 
 // Value object: guardado como JSON dentro de Question.options, sem tabela própria.
 type Option {
   label String
+}
+
+model Response {
+  id          Uuid              @id @onCreate(uuid(7))
+  formId      Uuid
+  form        Form              @relation(fields: [formId], references: [id])
+  email       String?
+  submittedAt TimestamptzString @default(now())
+
+  answers Answer[]
+
+  @@index([formId])
+}
+
+model Answer {
+  id         Uuid     @id @onCreate(uuid(7))
+  responseId Uuid
+  response   Response @relation(fields: [responseId], references: [id])
+  questionId Uuid
+  question   Question @relation(fields: [questionId], references: [id])
+  text       String?
+  choices    String[]
+
+  @@unique([responseId, questionId])
+  @@index([questionId])
 }
