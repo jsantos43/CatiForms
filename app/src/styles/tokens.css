@@ -1,0 +1,55 @@
+/* Tokens de design — fonte: design/README.md e design/Guia.dc.html */
+:root {
+  /* Cores */
+  --color-navy: #0a1f44;
+  --color-primary: #1d5fd6;
+  --color-primary-hover: #164bb0;
+  --color-primary-soft: #ebf2ff;
+  --color-surface: #f5f8fd;
+  --color-bg: #ffffff;
+  --color-text: #0f1b33;
+  --color-muted: #4b5870;
+  --color-border: #c5d0e3;
+  --color-border-soft: #e3e9f3;
+  --color-error: #b42318;
+  --color-success: #11603a;
+
+  /* Derivadas usadas nos layouts */
+  --color-error-bg: #fffbfa;
+  --color-error-soft: #fef3f2;
+  --color-error-soft-border: #f4c7c2;
+  --color-error-strong: #8a1c12;
+  --color-success-soft: #ecf7f1;
+  --color-focus-ring: #d6e4ff;
+  --color-disabled-bg: #e3e9f3;
+  --color-disabled-text: #6b7790;
+  --color-on-navy: #c9d6f2;
+  --color-on-navy-muted: #9fb3da;
+  --color-on-navy-check: #6fa0ff;
+
+  /* Tipografia */
+  --font-heading: 'Space Grotesk', Inter, system-ui, sans-serif;
+  --font-body: Inter, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Forma */
+  --radius-field: 8px;
+  --radius-card: 12px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgba(10, 31, 68, 0.06);
+  --touch-target: 44px;
+
+  /* Espaçamento (escala de 4px) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Larguras de conteúdo */
+  --content-app: 1120px;
+  --content-public: 720px;
+}

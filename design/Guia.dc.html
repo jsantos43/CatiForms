@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Cati Forms — Guia de estilo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1D5FD6}a:hover{color:#164BB0}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1560px; box-sizing: border-box; padding: 56px 64px; background: #FFFFFF; font-family: Inter, system-ui, sans-serif; color: #0F1B33; display: flex; flex-direction: column; gap: 40px">
+  <header style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; border-bottom: 1px solid #E3E9F3; padding-bottom: 24px">
+    <div>
+      <p style="margin: 0 0 6px; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #1D5FD6">Cati Forms · Referência para implementação</p>
+      <h1 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 40px; font-weight: 700; color: #0A1F44; letter-spacing: -0.02em">Guia de estilo e rotas</h1>
+    </div>
+    <p style="margin: 0; max-width: 420px; font-size: 14px; line-height: 1.55; color: #4B5870">Fundo branco, azul-marinho para estrutura e títulos, azul vivo para ações. Todos os tokens abaixo devem virar variáveis CSS.</p>
+  </header>
+
+  <section style="display: flex; flex-direction: column; gap: 16px">
+    <h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 22px; color: #0A1F44">Cores</h2>
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px">
+      <sc-for list="{{colors}}" as="c" hint-placeholder-count="12">
+        <div style="border: 1px solid #E3E9F3; border-radius: 12px; overflow: hidden">
+          <div style="height: 72px; background: {{c.hex}}"></div>
+          <div style="padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 13px; font-weight: 600">{{c.name}}</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #4B5870">{{c.token}}</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #4B5870">{{c.hex}}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px">
+    <section style="display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 22px; color: #0A1F44">Tipografia</h2>
+      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid #EEF2F8; padding-bottom: 10px"><span style="width: 120px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #4B5870">Display 40/700</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 40px; font-weight: 700; color: #0A1F44; letter-spacing: -0.02em">Formulários</span></div>
+      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid #EEF2F8; padding-bottom: 10px"><span style="width: 120px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #4B5870">Título 28/700</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #0A1F44">Novo formulário</span></div>
+      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid #EEF2F8; padding-bottom: 10px"><span style="width: 120px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #4B5870">Subtítulo 18/600</span><span style="font-size: 18px; font-weight: 600">Pergunta 1 de 3</span></div>
+      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid #EEF2F8; padding-bottom: 10px"><span style="width: 120px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #4B5870">Corpo 15/400</span><span style="font-size: 15px; line-height: 1.55">Texto corrido e campos de formulário.</span></div>
+      <div style="display: flex; align-items: baseline; gap: 16px"><span style="width: 120px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #4B5870">Legenda 13/500</span><span style="font-size: 13px; font-weight: 500; color: #4B5870">Criado por @ana.lima · 12/11/2026</span></div>
+      <p style="margin: 6px 0 0; font-size: 13px; color: #4B5870">Títulos: Space Grotesk. Interface e texto: Inter. Códigos e links: JetBrains Mono.</p>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 22px; color: #0A1F44">Componentes</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+        <button type="button" style="height: 44px; padding: 0 20px; border: 0; border-radius: 8px; background: #1D5FD6; color: #FFFFFF; font: inherit; font-weight: 600; font-size: 15px">Primário</button>
+        <button type="button" style="height: 44px; padding: 0 20px; border: 1px solid #C5D0E3; border-radius: 8px; background: #FFFFFF; color: #0A1F44; font: inherit; font-weight: 600; font-size: 15px">Secundário</button>
+        <button type="button" style="height: 44px; padding: 0 16px; border: 0; border-radius: 8px; background: #EBF2FF; color: #164BB0; font: inherit; font-weight: 600; font-size: 15px">Suave</button>
+        <button type="button" disabled style="height: 44px; padding: 0 20px; border: 0; border-radius: 8px; background: #E3E9F3; color: #6B7790; font: inherit; font-weight: 600; font-size: 15px">Desabilitado</button>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="g-in1" style="font-size: 14px; font-weight: 600">Campo padrão</label>
+          <input id="g-in1" type="text" placeholder="Digite aqui" style="height: 44px; padding: 0 14px; border: 1px solid #C5D0E3; border-radius: 8px; font: inherit; font-size: 15px">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="g-in2" style="font-size: 14px; font-weight: 600">Campo com foco</label>
+          <input id="g-in2" type="text" value="Texto digitado" style="height: 44px; padding: 0 14px; border: 2px solid #1D5FD6; border-radius: 8px; font: inherit; font-size: 15px; box-shadow: 0 0 0 3px #D6E4FF">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="g-in3" style="font-size: 14px; font-weight: 600">Campo com erro</label>
+          <input id="g-in3" type="text" style="height: 44px; padding: 0 14px; border: 2px solid #B42318; border-radius: 8px; font: inherit; font-size: 15px; background: #FFFBFA">
+          <span style="font-size: 13px; color: #B42318; font-weight: 500">Responda esta pergunta.</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 4px">
+          <label style="display: flex; align-items: center; gap: 10px; font-size: 15px"><input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #1D5FD6; margin: 0">Múltipla escolha</label>
+          <label style="display: flex; align-items: center; gap: 10px; font-size: 15px"><input type="radio" name="g-r" checked style="width: 18px; height: 18px; accent-color: #1D5FD6; margin: 0">Escolha única</label>
+        </div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <span style="padding: 4px 10px; border-radius: 999px; background: #EBF2FF; color: #164BB0; font-size: 12px; font-weight: 600">Discursiva</span>
+        <span style="padding: 4px 10px; border-radius: 999px; background: #E7F0FF; color: #0A1F44; font-size: 12px; font-weight: 600">Múltipla escolha</span>
+        <span style="padding: 4px 10px; border-radius: 999px; background: #0A1F44; color: #FFFFFF; font-size: 12px; font-weight: 600">Escolha única + justificativa</span>
+        <span style="padding: 4px 10px; border-radius: 999px; background: #ECF7F1; color: #11603A; font-size: 12px; font-weight: 600">Pede e-mail</span>
+      </div>
+    </section>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px">
+    <section style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 22px; color: #0A1F44">Espaçamento e forma</h2>
+      <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #4B5870">Escala de 4 px: 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64.<br>Raio: 8 px (campos, botões), 12 px (cartões), 999 px (selos).<br>Borda: 1 px #C5D0E3 em campos, #E3E9F3 em cartões.<br>Sombra de cartão: 0 1px 2px rgba(10,31,68,.06).<br>Alvos de toque: no mínimo 44 px.<br>Largura de conteúdo: 1120 px (área logada), 720 px (resposta pública).</p>
+    </section>
+    <section style="grid-column: span 2; display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 22px; color: #0A1F44">Mapa de rotas da SPA</h2>
+      <div style="border: 1px solid #E3E9F3; border-radius: 12px; overflow: hidden">
+        <sc-for list="{{routes}}" as="r" hint-placeholder-count="8">
+          <div style="display: grid; grid-template-columns: 240px 1fr 120px; gap: 16px; padding: 10px 16px; border-bottom: 1px solid #EEF2F8; font-size: 14px; align-items: center">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #164BB0">{{r.path}}</span>
+            <span>{{r.desc}}</span>
+            <span style="font-size: 12px; font-weight: 600; color: {{r.authColor}}">{{r.auth}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1560}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const priv = '#0A1F44', pub = '#11603A';
+    return {
+      colors: [
+        { name: 'Marinho', token: '--color-navy', hex: '#0A1F44' },
+        { name: 'Azul primário', token: '--color-primary', hex: '#1D5FD6' },
+        { name: 'Azul hover', token: '--color-primary-hover', hex: '#164BB0' },
+        { name: 'Azul claro', token: '--color-primary-soft', hex: '#EBF2FF' },
+        { name: 'Fundo de seção', token: '--color-surface', hex: '#F5F8FD' },
+        { name: 'Branco', token: '--color-bg', hex: '#FFFFFF' },
+        { name: 'Texto', token: '--color-text', hex: '#0F1B33' },
+        { name: 'Texto secundário', token: '--color-muted', hex: '#4B5870' },
+        { name: 'Borda de campo', token: '--color-border', hex: '#C5D0E3' },
+        { name: 'Borda de cartão', token: '--color-border-soft', hex: '#E3E9F3' },
+        { name: 'Erro', token: '--color-error', hex: '#B42318' },
+        { name: 'Sucesso', token: '--color-success', hex: '#11603A' }
+      ],
+      routes: [
+        { path: '/login', desc: 'Entrar com username e senha', auth: 'Pública', authColor: pub },
+        { path: '/cadastro', desc: 'Criar conta (username único)', auth: 'Pública', authColor: pub },
+        { path: '/formularios', desc: 'Lista de todos os formulários', auth: 'Logado', authColor: priv },
+        { path: '/formularios/novo', desc: 'Criar formulário e perguntas', auth: 'Logado', authColor: priv },
+        { path: '/formularios/:id/publicado', desc: 'Link gerado após a criação', auth: 'Logado', authColor: priv },
+        { path: '/formularios/:id', desc: 'Detalhes, respostas e exportação CSV/PDF', auth: 'Logado', authColor: priv },
+        { path: '/f/:codigo', desc: 'Página de resposta (link compartilhado)', auth: 'Pública', authColor: pub },
+        { path: '/f/:codigo/enviado', desc: 'Confirmação de envio', auth: 'Pública', authColor: pub }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

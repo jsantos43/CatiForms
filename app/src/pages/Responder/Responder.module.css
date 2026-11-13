@@ -1,0 +1,165 @@
+.loading {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--color-muted);
+}
+
+.header {
+  border: 1px solid var(--color-border-soft);
+  border-top: 6px solid var(--color-navy);
+  border-radius: var(--radius-card);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.title {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.description {
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--color-muted);
+  white-space: pre-line;
+}
+
+.requiredNote {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-field);
+  background: var(--color-bg);
+  font-size: 15px;
+}
+
+.textarea {
+  height: auto;
+  padding: 12px 14px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.input:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+  border-color: var(--color-primary);
+}
+
+.input[aria-invalid='true'] {
+  border: 2px solid var(--color-error);
+  padding: 0 13px;
+}
+
+.textarea[aria-invalid='true'] {
+  padding: 11px 13px;
+}
+
+.input[aria-invalid='true']:focus {
+  outline-color: var(--color-error);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.justificationLabel {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.reset {
+  min-height: var(--touch-target);
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-field);
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reset:hover {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-hover);
+}
+
+.submit {
+  height: 48px;
+  padding: 0 28px;
+  font-size: 16px;
+}
+
+/* Celular (RNF02): fontes de 16px evitam o zoom automático do iOS nos campos. */
+@media (max-width: 560px) {
+  .header {
+    padding: 20px;
+    gap: 8px;
+  }
+
+  .header {
+    border-top-width: 5px;
+  }
+
+  .title {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+
+  .description {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .requiredNote {
+    margin-top: 4px;
+  }
+
+  .form {
+    gap: 16px;
+  }
+
+  .input {
+    font-size: 16px;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .submit {
+    height: 52px;
+    border-radius: 10px;
+  }
+}

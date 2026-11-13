@@ -1,0 +1,43 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+.name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.large .mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.large .name {
+  font-size: 22px;
+}
+
+.small {
+  gap: 10px;
+}
+
+.small .mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+
+.small .name {
+  font-size: 18px;
+}

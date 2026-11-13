@@ -1,0 +1,85 @@
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: var(--color-surface);
+  cursor: pointer;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.description {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.control {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  flex: none;
+}
+
+.input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.track {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--color-border);
+  transition: background-color 0.15s;
+}
+
+.thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(10, 31, 68, 0.2);
+  transition: left 0.15s;
+}
+
+.input:checked ~ .track {
+  background: var(--color-primary);
+}
+
+.input:checked ~ .thumb {
+  left: 23px;
+}
+
+.input:focus-visible ~ .track {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track,
+  .thumb {
+    transition: none;
+  }
+}

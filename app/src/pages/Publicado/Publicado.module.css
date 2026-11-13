@@ -1,0 +1,114 @@
+.page {
+  width: 100%;
+  max-width: 640px;
+  margin: 24px auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.badge {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-pill);
+  background: var(--color-success-soft);
+  color: var(--color-success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  margin-bottom: 8px;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.text {
+  font-size: 16px;
+  color: var(--color-muted);
+}
+
+.card {
+  width: 100%;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  box-shadow: var(--shadow-card);
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.copyRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.linkInput {
+  flex: 1 1 260px;
+  min-width: 0;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-field);
+  background: var(--color-surface);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--color-navy);
+}
+
+.linkInput:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.status {
+  min-height: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-success);
+}
+
+.statusError {
+  color: var(--color-error);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.backLink {
+  min-height: var(--touch-target);
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+@media (max-width: 560px) {
+  .page {
+    margin-top: 8px;
+  }
+
+  .title {
+    font-size: 26px;
+  }
+
+  .copyRow > button {
+    flex: 1 1 100%;
+  }
+}
