@@ -5,8 +5,10 @@ export const questionTypeSchema = z.enum(['TEXT', 'MULTIPLE_CHOICE', 'SINGLE_CHO
 
 export type QuestionType = z.infer<typeof questionTypeSchema>;
 
+// Rotas aninhadas: /forms/:id/questions/:questionId (id = form, questionId = question).
 export const questionIdSchema = z.object({
-  id: z.uuid('Id must be a valid UUID'),
+  id: z.uuid('Form id must be a valid UUID'),
+  questionId: z.uuid('Question id must be a valid UUID'),
 });
 
 export type QuestionIdParams = z.infer<typeof questionIdSchema>;
@@ -16,14 +18,12 @@ const position = z.number().int().nonnegative('Position must be a non-negative i
 
 export const createQuestionSchema = z.discriminatedUnion('type', [
   z.object({
-    formId: z.uuid('Form id must be a valid UUID'),
     type: z.literal('TEXT'),
     title,
     position,
     // Sem o campo "options" aqui: o Zod descarta qualquer options enviada numa question TEXT.
   }),
   z.object({
-    formId: z.uuid('Form id must be a valid UUID'),
     type: z.enum(['MULTIPLE_CHOICE', 'SINGLE_CHOICE_JUSTIFIED']),
     title,
     position,
