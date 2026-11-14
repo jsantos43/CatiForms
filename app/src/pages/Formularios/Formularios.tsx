@@ -52,9 +52,6 @@ export default function Formularios() {
       <div className={styles.header}>
         <div>
           <h1 className={styles.title}>Formulários</h1>
-          <p className={styles.subtitle}>
-            Todos os formulários da plataforma, com as respostas de cada um.
-          </p>
         </div>
         <Link to="/formularios/novo" className={buttonClass()}>
           <PlusIcon />

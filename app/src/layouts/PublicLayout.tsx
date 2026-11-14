@@ -12,7 +12,7 @@ export function PublicLayout({ children, footer }: { children: ReactNode; footer
           <span className={styles.mark}>
             <FormIcon size={15} strokeWidth={2.2} />
           </span>
-          Cati Forms
+          CatiForms
         </div>
         {children}
         {footer}

@@ -22,7 +22,7 @@ export function TopBar() {
     <header className={`${styles.bar} no-print`}>
       <div className={styles.inner}>
         <div className={styles.left}>
-          <Link to="/formularios" className={styles.brand} aria-label="Cati Forms — início">
+          <Link to="/formularios" className={styles.brand} aria-label="CatiForms — início">
             <Logo size="small" />
           </Link>
           <nav aria-label="Principal" className={styles.nav}>

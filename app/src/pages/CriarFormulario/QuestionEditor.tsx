@@ -1,7 +1,9 @@
-import type { KeyboardEvent } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import type { QuestionType } from '../../api/types';
 import { FieldError } from '../../components/Field';
-import { CloseIcon, PlusIcon, TrashIcon } from '../../components/icons';
+import { CloseIcon, DragHandleIcon, PlusIcon, TrashIcon } from '../../components/icons';
 import { errorProps } from '../../lib/a11y';
 import { isChoice, MIN_OPTIONS, QUESTION_TYPE_LABEL, QUESTION_TYPES } from '../../lib/questionTypes';
 import { changeType, fieldId, newOption, type DraftErrors, type DraftQuestion } from './draft';
@@ -17,6 +19,8 @@ type QuestionEditorProps = {
   onActivate: () => void;
   // Pede para focar um campo depois do próximo render (ex.: opção recém-criada).
   requestFocus: (id: string) => void;
+  // Barra lateral flutuante (botão de adicionar), mostrada só no cartão selecionado.
+  toolbar?: ReactNode;
 };
 
 const HINT: Record<QuestionType, string | null> = {
@@ -34,11 +38,15 @@ export function QuestionEditor({
   onRemove,
   onActivate,
   requestFocus,
+  toolbar,
 }: QuestionEditorProps) {
   const titleId = fieldId.question(q);
   const typeId = `q-${q.key}-type`;
   const titleError = errors[titleId];
   const canRemoveOption = q.options.length > MIN_OPTIONS;
+
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } =
+    useSortable({ id: q.key });
 
   const setOption = (key: string, label: string) =>
     onChange({ ...q, options: q.options.map((o) => (o.key === key ? { ...o, label } : o)) });
@@ -68,61 +76,63 @@ export function QuestionEditor({
 
   return (
     <section
-      className={`${styles.question} ${active ? styles.questionActive : ''}`}
-      aria-labelledby={`q-${q.key}-heading`}
+      ref={setNodeRef}
+      style={{ transform: CSS.Translate.toString(transform), transition }}
+      className={[styles.question, active && styles.questionActive, isDragging && styles.questionDragging]
+        .filter(Boolean)
+        .join(' ')}
+      aria-label={`Pergunta ${number}`}
       onFocus={onActivate}
+      onPointerDown={onActivate}
     >
-      <div className={styles.questionHeader}>
-        <span id={`q-${q.key}-heading`} className={styles.questionNumber}>
-          Pergunta {number}
-          {active && <span aria-hidden="true"> · editando</span>}
-        </span>
-        <div className={styles.questionTools}>
-          <label htmlFor={typeId} className="visually-hidden">
-            Tipo da pergunta {number}
-          </label>
-          <select
-            id={typeId}
-            className={styles.typeSelect}
-            value={q.type}
-            onChange={(e) => onChange(changeType(q, e.target.value as QuestionType))}
-          >
-            {QUESTION_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {QUESTION_TYPE_LABEL[type]}
-              </option>
-            ))}
-          </select>
-          <button
-            type="button"
-            className={styles.iconButton}
-            aria-label={`Remover pergunta ${number}`}
-            onClick={onRemove}
-          >
-            <TrashIcon />
-          </button>
-        </div>
-      </div>
+      <button
+        type="button"
+        ref={setActivatorNodeRef}
+        className={styles.dragHandle}
+        aria-label={`Mover pergunta ${number}`}
+        title="Arraste para mover"
+        {...attributes}
+        {...listeners}
+      >
+        <DragHandleIcon />
+      </button>
 
-      <label htmlFor={titleId} className="visually-hidden">
-        Enunciado da pergunta {number}
-      </label>
-      <input
-        id={titleId}
-        type="text"
-        className={styles.questionTitle}
-        placeholder="Escreva a pergunta"
-        value={q.title}
-        onChange={(e) => onChange({ ...q, title: e.target.value })}
-        {...errorProps(titleId, titleError)}
-      />
+      <div className={styles.questionHeader}>
+        <label htmlFor={titleId} className="visually-hidden">
+          Enunciado da pergunta {number}
+        </label>
+        <input
+          id={titleId}
+          type="text"
+          className={styles.questionTitle}
+          placeholder="Pergunta"
+          value={q.title}
+          onChange={(e) => onChange({ ...q, title: e.target.value })}
+          {...errorProps(titleId, titleError)}
+        />
+        <label htmlFor={typeId} className="visually-hidden">
+          Tipo da pergunta {number}
+        </label>
+        <select
+          id={typeId}
+          className={styles.typeSelect}
+          value={q.type}
+          onChange={(e) => onChange(changeType(q, e.target.value as QuestionType))}
+        >
+          {QUESTION_TYPES.map((type) => (
+            <option key={type} value={type}>
+              {QUESTION_TYPE_LABEL[type]}
+            </option>
+          ))}
+        </select>
+      </div>
       {titleError && <FieldError id={`${titleId}-error`}>{titleError}</FieldError>}
 
       {HINT[q.type] && <p className={styles.hint}>{HINT[q.type]}</p>}
 
       {q.type === 'TEXT' && (
         <div aria-hidden="true" className={`${styles.preview} ${styles.previewText}`}>
-          Resposta em texto livre do respondente
+          Texto de resposta longa
         </div>
       )}
 
@@ -153,7 +163,7 @@ export function QuestionEditor({
                     type="button"
                     className={styles.optionRemove}
                     aria-label={`Remover opção ${i + 1}`}
-                    title={canRemoveOption ? undefined : `Mínimo de ${MIN_OPTIONS} opções`}
+                    title={canRemoveOption ? 'Remover opção' : `Mínimo de ${MIN_OPTIONS} opções`}
                     disabled={!canRemoveOption}
                     onClick={() => removeOption(i)}
                   >
@@ -177,9 +187,27 @@ export function QuestionEditor({
 
       {q.type === 'SINGLE_CHOICE_JUSTIFIED' && (
         <div aria-hidden="true" className={styles.preview}>
-          Campo de justificativa (obrigatório para o respondente)
+          Campo de justificativa
         </div>
       )}
+
+      <div className={styles.questionFooter}>
+        <button
+          type="button"
+          className={styles.iconButton}
+          aria-label={`Excluir pergunta ${number}`}
+          title="Excluir"
+          onClick={onRemove}
+        >
+          <TrashIcon />
+        </button>
+        <span className={styles.footerDivider} aria-hidden="true" />
+        <span className={styles.requiredTag}>
+          Obrigatória <span className={styles.required} aria-hidden="true">*</span>
+        </span>
+      </div>
+
+      {toolbar}
     </section>
   );
 }

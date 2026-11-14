@@ -157,17 +157,14 @@ relacionadas**.
 ### Passo a passo
 
 ```bash
-# 1. Clone o repositório
 git clone https://github.com/jsantos43/CatiForms.git
 cd CatiForms
 
-# 2. Crie o arquivo de ambiente da API e defina um JWT_SECRET seu
 cp api/.env.example api/.env
 
-# 3. Suba banco, API e front-end
-docker compose up
+docker compose up -d
 
-# 4. Em outro terminal, crie as tabelas no banco (só na primeira execução)
+# Crie as tabelas no banco (só na primeira execução)
 docker compose exec api npm run db:update
 ```
 
@@ -187,21 +184,6 @@ Pronto! Acesse **http://localhost:5173**.
 | `PORT` | Porta da API (padrão `3000`, a mesma que o proxy do front-end usa) |
 | `NODE_ENV` | `development` ou `production` (em produção os cookies passam a exigir HTTPS) |
 | `JWT_SECRET` | Segredo usado para assinar os tokens. Use um valor longo e aleatório. |
-
----
-
-## 🔭 Próximos passos
-
-Em linha com as *Evoluções Futuras* do documento de requisitos:
-
-- **Perfis e níveis de acesso.** Uma implementação inicial, com perfil de administrador e permissões
-  por formulário, está na branch
-  [`feature/perfis-de-acesso`](https://github.com/jsantos43/CatiForms/tree/feature/perfis-de-acesso).
-  Ela ficou fora da `main` porque o escopo desta versão define um único tipo de usuário (RN02).
-- Integração com outros sistemas internos da CATI Jr.
-- Edição e exclusão de formulários com tratamento das respostas existentes.
-- Perguntas opcionais e novos tipos de pergunta (escala, data, upload de arquivo).
-- Recuperação de senha.
 
 ---
 

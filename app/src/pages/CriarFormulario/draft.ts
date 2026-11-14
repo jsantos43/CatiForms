@@ -40,7 +40,7 @@ export const changeType = (q: DraftQuestion, type: QuestionType): DraftQuestion 
 // Ids dos campos no DOM. Os erros usam o mesmo id como chave, para focar o primeiro inválido.
 export const fieldId = {
   title: 'f-title',
-  addQuestion: 'add-question-TEXT',
+  addQuestion: 'add-question',
   question: (q: DraftQuestion) => `q-${q.key}-text`,
   option: (q: DraftQuestion, o: DraftOption) => `q-${q.key}-opt-${o.key}`,
 };

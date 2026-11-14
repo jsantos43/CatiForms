@@ -119,3 +119,15 @@ export const ChevronRightIcon = ({ size = 16, ...props }: IconProps) => (
     <path d="M9 6l6 6-6 6" />
   </svg>
 );
+
+// Alça de arrastar (seis pontos na horizontal, como no Google Forms).
+export const DragHandleIcon = ({ size = 20, ...props }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden focusable={false} {...props}>
+    <circle cx="6" cy="9" r="1.6" />
+    <circle cx="12" cy="9" r="1.6" />
+    <circle cx="18" cy="9" r="1.6" />
+    <circle cx="6" cy="15" r="1.6" />
+    <circle cx="12" cy="15" r="1.6" />
+    <circle cx="18" cy="15" r="1.6" />
+  </svg>
+);

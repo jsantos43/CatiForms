@@ -2,20 +2,14 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   gap: 16px;
 }
 
 .title {
-  margin-bottom: 6px;
   font-size: 34px;
   font-weight: 700;
   letter-spacing: -0.02em;
-}
-
-.subtitle {
-  font-size: 15px;
-  color: var(--color-muted);
 }
 
 .toolbar {

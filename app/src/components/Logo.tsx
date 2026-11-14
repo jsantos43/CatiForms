@@ -12,7 +12,7 @@ export function Logo({ size = 'large' }: LogoProps) {
       <span className={styles.mark}>
         <FormIcon size={size === 'large' ? 22 : 16} />
       </span>
-      <span className={styles.name}>Cati Forms</span>
+      <span className={styles.name}>CatiForms</span>
     </span>
   );
 }

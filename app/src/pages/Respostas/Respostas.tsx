@@ -90,9 +90,9 @@ function FormResponses({ form, respState }: { form: FormDetail; respState: Respo
   const selected = responses.find((r) => r.id === selectedId) ?? responses[0];
 
   useEffect(() => {
-    document.title = `${form.title} · Respostas · Cati Forms`;
+    document.title = `${form.title} · Respostas · CatiForms`;
     return () => {
-      document.title = 'Cati Forms';
+      document.title = 'CatiForms';
     };
   }, [form.title]);
 

@@ -1,4 +1,4 @@
-# Requisitos — Cati Forms
+# Requisitos — CatiForms
 
 Legenda: `[ok]` atendido · `[~]` atendido parcialmente · `[ ]` não atendido / não verificado
 

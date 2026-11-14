@@ -7,7 +7,7 @@ export default function Enviado() {
   const title = (useLocation().state as { title?: string } | null)?.title;
 
   return (
-    <PublicLayout footer={<p className={styles.footer}>Feito com Cati Forms · CATI Jr.</p>}>
+    <PublicLayout footer={<p className={styles.footer}>Feito com CatiForms · CATI Jr.</p>}>
       <section className={styles.card}>
         <div className={styles.badge}>
           <CheckIcon size={30} />

@@ -86,8 +86,7 @@ export default function Publicado() {
       <div>
         <h1 className={styles.title}>Formulário publicado</h1>
         <p className={styles.text}>
-          “{form.title}” já pode receber respostas. Qualquer pessoa com o link
-          pode responder, sem precisar de cadastro.
+          Qualquer pessoa com o link pode responder.
         </p>
       </div>
 

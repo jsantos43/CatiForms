@@ -75,9 +75,9 @@ function ResponseForm({ form }: { form: PublicForm }) {
   const [sendError, setSendError] = useState('');
 
   useEffect(() => {
-    document.title = `${form.title} · Cati Forms`;
+    document.title = `${form.title} · CatiForms`;
     return () => {
-      document.title = 'Cati Forms';
+      document.title = 'CatiForms';
     };
   }, [form.title]);
 

@@ -1,17 +1,33 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type Announcements,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { createForm, deleteForm, publishForm } from '../../api/forms';
 import { createQuestion } from '../../api/questions';
-import type { QuestionType } from '../../api/types';
 import { Alert } from '../../components/Alert';
 import { BackLink } from '../../components/BackLink';
 import { Button } from '../../components/Button';
 import { buttonClass } from '../../components/buttonClass';
 import { FieldError, TextAreaField, TextField } from '../../components/Field';
-import { InfoIcon, MultipleTypeIcon, SingleTypeIcon, TextTypeIcon } from '../../components/icons';
+import { PlusIcon } from '../../components/icons';
 import { Switch } from '../../components/Switch';
 import { plural } from '../../lib/format';
-import { QUESTION_TYPE_LABEL } from '../../lib/questionTypes';
 import {
   fieldId,
   newQuestion,
@@ -22,11 +38,14 @@ import {
 import { QuestionEditor } from './QuestionEditor';
 import styles from './CriarFormulario.module.css';
 
-const ADD_BUTTONS: { type: QuestionType; Icon: typeof TextTypeIcon }[] = [
-  { type: 'TEXT', Icon: TextTypeIcon },
-  { type: 'MULTIPLE_CHOICE', Icon: MultipleTypeIcon },
-  { type: 'SINGLE_CHOICE_JUSTIFIED', Icon: SingleTypeIcon },
-];
+// Textos lidos pelo leitor de tela ao mover uma pergunta pelo teclado ou mouse.
+const DRAG_INSTRUCTIONS = {
+  draggable:
+    'Para mover a pergunta, pressione espaço ou Enter. Use as setas para cima e para baixo para mudar a posição e espaço ou Enter de novo para soltar. Esc cancela.',
+};
+
+const position = (questions: DraftQuestion[], key: unknown) =>
+  questions.findIndex((q) => q.key === key) + 1;
 
 const focusField = (id: string) => {
   const el = document.getElementById(id);
@@ -86,12 +105,61 @@ export default function CriarFormulario() {
     focusAfterRender(neighbor ? fieldId.question(neighbor) : fieldId.addQuestion);
   };
 
-  const addQuestion = (type: QuestionType) => {
-    const q = newQuestion(type);
-    setQuestions((qs) => [...qs, q]);
+  // Como no Google Forms: a nova pergunta entra logo abaixo da selecionada (ou no fim).
+  const addQuestion = () => {
+    const q = newQuestion('TEXT');
+    setQuestions((qs) => {
+      const at = qs.findIndex((item) => item.key === activeKey);
+      if (at === -1) return [...qs, q];
+      return [...qs.slice(0, at + 1), q, ...qs.slice(at + 1)];
+    });
     setActiveKey(q.key);
     focusAfterRender(fieldId.question(q));
   };
+
+  const sensors = useSensors(
+    // Só começa a arrastar depois de 4px, para um clique na alça não virar arraste.
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragStart = ({ active }: DragStartEvent) => setActiveKey(String(active.id));
+
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    if (!over || active.id === over.id) return;
+    setQuestions((qs) => {
+      const from = qs.findIndex((q) => q.key === active.id);
+      const to = qs.findIndex((q) => q.key === over.id);
+      return arrayMove(qs, from, to);
+    });
+  };
+
+  const announcements: Announcements = {
+    onDragStart: ({ active }) => `Pergunta ${position(questions, active.id)} selecionada para mover.`,
+    onDragOver: ({ over }) =>
+      over ? `Posição ${position(questions, over.id)} de ${questions.length}.` : 'Fora da lista.',
+    onDragEnd: ({ over }) =>
+      over ? `Pergunta movida para a posição ${position(questions, over.id)}.` : 'Movimento cancelado.',
+    onDragCancel: () => 'Movimento cancelado. A pergunta voltou para o lugar.',
+  };
+
+  const addError = errors[fieldId.addQuestion];
+  const toolbar = (
+    <div className={styles.toolbar}>
+      <button
+        type="button"
+        id={fieldId.addQuestion}
+        className={styles.toolbarButton}
+        aria-label="Adicionar pergunta"
+        title="Adicionar pergunta"
+        onClick={addQuestion}
+        aria-describedby={addError ? `${fieldId.addQuestion}-error` : undefined}
+      >
+        <PlusIcon size={22} />
+      </button>
+    </div>
+  );
+  const active = questions.some((q) => q.key === activeKey) ? activeKey : null;
 
   const handleCancel = () => {
     if (dirty && !window.confirm('Descartar este formulário? O que você escreveu será perdido.')) return;
@@ -107,6 +175,14 @@ export default function CriarFormulario() {
     const first = Object.keys(found)[0];
     if (first) {
       focusField(first);
+      return;
+    }
+
+    if (
+      !window.confirm(
+        'Publicar este formulário?\n\nTodas as perguntas serão obrigatórias. Depois de publicado, o formulário não pode ser editado nem excluído, então revise antes de publicar.',
+      )
+    ) {
       return;
     }
 
@@ -147,15 +223,12 @@ export default function CriarFormulario() {
       <BackLink to="/formularios">Voltar para formulários</BackLink>
       <h1 className={styles.title}>Novo formulário</h1>
 
-      <div role="note" className={styles.note}>
-        <InfoIcon className={styles.noteIcon} />
-        <span>
-          Todas as perguntas serão obrigatórias. Depois de publicado, o formulário{' '}
-          <strong>não pode ser editado nem excluído</strong>, então revise antes de publicar.
-        </span>
-      </div>
-
-      <section className={styles.formCard} aria-label="Dados do formulário">
+      <section
+        className={`${styles.formCard} ${active === null ? styles.formCardActive : ''}`}
+        aria-label="Dados do formulário"
+        onFocus={() => setActiveKey(null)}
+        onPointerDown={() => setActiveKey(null)}
+      >
         <TextField
           id={fieldId.title}
           label="Título do formulário"
@@ -180,45 +253,36 @@ export default function CriarFormulario() {
           checked={collectEmail}
           onChange={setCollectEmail}
         />
+        {active === null && toolbar}
       </section>
 
-      {questions.map((q, i) => (
-        <QuestionEditor
-          key={q.key}
-          question={q}
-          number={i + 1}
-          active={activeKey === q.key}
-          errors={errors}
-          onChange={updateQuestion}
-          onRemove={() => removeQuestion(i)}
-          onActivate={() => setActiveKey(q.key)}
-          requestFocus={focusAfterRender}
-        />
-      ))}
-
-      <section className={styles.addCard} aria-labelledby="add-question-label">
-        <span id="add-question-label" className={styles.addTitle}>
-          Adicionar pergunta
-        </span>
-        <div className={styles.addButtons}>
-          {ADD_BUTTONS.map(({ type, Icon }) => (
-            <button
-              key={type}
-              id={`add-question-${type}`}
-              type="button"
-              className={styles.addButton}
-              onClick={() => addQuestion(type)}
-              aria-describedby={type === 'TEXT' && errors[fieldId.addQuestion] ? `${fieldId.addQuestion}-error` : undefined}
-            >
-              <Icon />
-              {QUESTION_TYPE_LABEL[type]}
-            </button>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        modifiers={[restrictToVerticalAxis]}
+        accessibility={{ announcements, screenReaderInstructions: DRAG_INSTRUCTIONS }}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={questions.map((q) => q.key)} strategy={verticalListSortingStrategy}>
+          {questions.map((q, i) => (
+            <QuestionEditor
+              key={q.key}
+              question={q}
+              number={i + 1}
+              active={active === q.key}
+              errors={errors}
+              onChange={updateQuestion}
+              onRemove={() => removeQuestion(i)}
+              onActivate={() => setActiveKey(q.key)}
+              requestFocus={focusAfterRender}
+              toolbar={active === q.key ? toolbar : undefined}
+            />
           ))}
-        </div>
-        {errors[fieldId.addQuestion] && (
-          <FieldError id={`${fieldId.addQuestion}-error`}>{errors[fieldId.addQuestion]}</FieldError>
-        )}
-      </section>
+        </SortableContext>
+      </DndContext>
+
+      {addError && <FieldError id={`${fieldId.addQuestion}-error`}>{addError}</FieldError>}
 
       {errorCount > 0 && (
         <Alert>
