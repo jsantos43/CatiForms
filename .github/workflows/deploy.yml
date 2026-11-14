@@ -1,0 +1,28 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # permite rodar manualmente pela aba Actions
+
+# Nunca roda dois deploys ao mesmo tempo
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configura SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -p "${{ secrets.SSH_PORT || 22 }}" "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Atualiza o código e roda o deploy.sh
+        run: |
+          ssh -i ~/.ssh/id_deploy -p "${{ secrets.SSH_PORT || 22 }}" \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            'cd ~/catiforms && git fetch origin main && git reset --hard origin/main && bash deploy/deploy.sh'

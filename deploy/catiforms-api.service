@@ -2,17 +2,13 @@
 #   sudo systemctl daemon-reload && sudo systemctl enable --now catiforms-api
 [Unit]
 Description=CatiForms API
-# O banco roda no Docker (deploy/compose.yaml) e volta sozinho com restart: unless-stopped
 After=network.target docker.service
 Wants=docker.service
 
 [Service]
 Type=simple
-User=USUARIO
-WorkingDirectory=/home/USUARIO/catiforms/api
-# As variáveis ficam em api/.env (lido pelo dotenv): DATABASE_URL, JWT_SECRET, PORT,
-# NODE_ENV=production e API_PUBLIC_PATH=/catiforms/api
-# Node instalado pelo apt
+User=deploy
+WorkingDirectory=/home/deploy/catiforms/api
 ExecStart=/usr/bin/node dist/server.js
 Restart=on-failure
 RestartSec=5
