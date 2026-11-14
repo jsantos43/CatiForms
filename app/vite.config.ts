@@ -3,6 +3,8 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Caminho onde o app é servido. Em produção: VITE_BASE_PATH=/catiforms/
+  base: process.env.VITE_BASE_PATH ?? '/',
   plugins: [react()],
   server: {
     // Escuta em todas as interfaces para ser acessível de fora do container

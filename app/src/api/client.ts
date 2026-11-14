@@ -1,7 +1,8 @@
 import type { ApiErrorBody } from './types';
 
-// Em dev o Vite repassa /api para a API (vite.config.ts). Pode ser trocado por env.
-const BASE_URL = import.meta.env.VITE_API_URL ?? '/api';
+// A API fica em <base>/api: em dev o Vite repassa /api (vite.config.ts); em produção o nginx faz o mesmo.
+// Pode ser trocado por env.
+const BASE_URL = import.meta.env.VITE_API_URL ?? `${import.meta.env.BASE_URL}api`;
 
 export class ApiError extends Error {
   status: number;

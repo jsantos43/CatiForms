@@ -5,7 +5,8 @@ export const formatDate = (iso: string) => dateFmt.format(new Date(iso));
 
 // Link público do formulário (rota /f/:slug).
 export const formSharePath = (slug: string) => `/f/${slug}`;
-export const formShareUrl = (slug: string) => `${window.location.origin}${formSharePath(slug)}`;
+export const formShareUrl = (slug: string) =>
+  `${window.location.origin}${import.meta.env.BASE_URL.replace(/\/$/, '')}${formSharePath(slug)}`;
 
 // Minúsculas e sem acentos, para busca.
 export const normalize = (text: string) =>

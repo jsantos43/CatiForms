@@ -13,6 +13,7 @@ export const env = {
   databaseUrl: required('DATABASE_URL'),
   isProd: process.env['NODE_ENV'] === 'production',
   jwtSecret: required('JWT_SECRET'),
+  apiPublicPath: (process.env['API_PUBLIC_PATH'] ?? '/api').replace(/\/$/, ''),
   accessTokenTtl: 15 * 60, // 15 minutes
   refreshTokenTtl: 7 * 24 * 60 * 60, // 7 days
 };

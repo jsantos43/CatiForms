@@ -4,11 +4,14 @@ import { Unauthorized } from '../errors/index.js';
 import type { LoginData } from '../schemas/Auth.js';
 import Service from '../services/Auth.js';
 
+const refreshCookiePath = () => `${env.apiPublicPath}/auth`;
+
 const setAuthCookies = (res: Response, tokens: { accessToken: string; refreshToken: string }) => {
   res.cookie('accessToken', tokens.accessToken, {
     httpOnly: true,
     secure: env.isProd,
     sameSite: 'lax',
+    path: env.apiPublicPath,
     maxAge: env.accessTokenTtl * 1000,
   });
 
@@ -16,14 +19,14 @@ const setAuthCookies = (res: Response, tokens: { accessToken: string; refreshTok
     httpOnly: true,
     secure: env.isProd,
     sameSite: 'lax',
-    path: '/auth',
+    path: refreshCookiePath(),
     maxAge: env.refreshTokenTtl * 1000,
   });
 };
 
 const clearAuthCookies = (res: Response) => {
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
+  res.clearCookie('accessToken', { path: env.apiPublicPath });
+  res.clearCookie('refreshToken', { path: refreshCookiePath() });
 };
 
 class Auth {
