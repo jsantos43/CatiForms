@@ -483,13 +483,6 @@
           },
           "User": {
             "fields": {
-              "admin": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/bool@1",
-                  "kind": "scalar"
-                }
-              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -580,9 +573,6 @@
             },
             "storage": {
               "fields": {
-                "admin": {
-                  "column": "admin"
-                },
                 "createdAt": {
                   "column": "createdAt"
                 },
@@ -999,15 +989,6 @@
             },
             "User": {
               "columns": {
-                "admin": {
-                  "codecId": "pg/bool@1",
-                  "dataType": "pg/bool",
-                  "default": {
-                    "kind": "literal",
-                    "value": false
-                  },
-                  "nullable": false
-                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
@@ -1121,7 +1102,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "c49e6d54b6134ab65e339509c2b3b074625f5fe18e8b2a990156b082c7f13c7d"
+    "storageHash": "0fb8a021afe4cffe6f70a91836ef68069e625ab2202f2b200894bbbf6654e430"
   },
   "execution": {
     "executionHash": "f3a46c17fb6c832b73b701db78c8f6ee80e33b993740e5ce6cba932337cd60e2",

@@ -4,16 +4,6 @@ import type { CreateUserData, UpdateUserData, UserIdParams } from '../schemas/Us
 import Service from '../services/User.js';
 
 class User {
-  static async readAll(req: Request, res: Response, next: NextFunction) {
-    try {
-      const users = await Service.readAll();
-
-      return res.status(200).json({ success: true, users });
-    } catch (err) {
-      return next(err);
-    }
-  }
-
   static readSelf(req: Request, res: Response, next: NextFunction) {
     if (!req.user) return next(new Unauthorized());
 
@@ -60,35 +50,11 @@ class User {
     }
   }
 
-  static async updateOther(
-    req: Request<UserIdParams, unknown, UpdateUserData>,
-    res: Response,
-    next: NextFunction,
-  ) {
-    try {
-      const user = await Service.update(req.params.id, req.body);
-
-      return res.status(200).json({ success: true, user });
-    } catch (err) {
-      return next(err);
-    }
-  }
-
   static async delete(req: Request, res: Response, next: NextFunction) {
     try {
       if (!req.user) throw new Unauthorized();
 
       const user = await Service.delete(req.user.id);
-
-      return res.status(200).json({ success: true, user });
-    } catch (err) {
-      return next(err);
-    }
-  }
-
-  static async deleteOther(req: Request<UserIdParams>, res: Response, next: NextFunction) {
-    try {
-      const user = await Service.delete(req.params.id);
 
       return res.status(200).json({ success: true, user });
     } catch (err) {

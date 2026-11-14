@@ -9,17 +9,12 @@ const router = Router();
 router
   .get(
     '/user', 
-    auth('logged'),
+    auth,
     Controller.readSelf
   )
   .get(
-    '/user/all', 
-    auth('admin'), 
-    Controller.readAll
-  )
-  .get(
     '/user/:id', 
-    auth('logged'), 
+    auth, 
     validate(userIdSchema, 'params'), 
     Controller.readById
   )
@@ -30,27 +25,14 @@ router
   )
   .put(
     '/user',
-    auth('logged'),
+    auth,
     validate(updateUserSchema),
     Controller.update,
   )
-  .put(
-    '/user/:id',
-    auth('admin'),
-    validate(userIdSchema, 'params'),
-    validate(updateUserSchema),
-    Controller.updateOther,
-  )
   .delete(
     '/user',
-    auth('logged'),
+    auth,
     Controller.delete
-  )
-  .delete(
-    '/user/:id', 
-    auth('admin'), 
-    validate(userIdSchema, 'params'), 
-    Controller.deleteOther
   );
 
 export default router;

@@ -16,19 +16,19 @@ router
   .get(
     '/',
     validate(formIdSchema, 'params'),
-    auth('forms:read'),
+    auth,
     Controller.readAll,
   )
   .get(
     '/:questionId',
     validate(questionIdSchema, 'params'),
-    auth('forms:read'),
+    auth,
     Controller.readById,
   )
   .post(
     '/',
     validate(formIdSchema, 'params'),
-    auth('forms:edit'),
+    auth,
     validate(createQuestionSchema),
     verifyPublished,
     Controller.create,
@@ -36,7 +36,7 @@ router
   .put(
     '/:questionId',
     validate(questionIdSchema, 'params'),
-    auth('forms:edit'),
+    auth,
     validate(updateQuestionSchema),
     verifyPublished,
     Controller.update,
@@ -44,7 +44,7 @@ router
   .delete(
     '/:questionId',
     validate(questionIdSchema, 'params'),
-    auth('forms:edit'),
+    auth,
     verifyPublished,
     Controller.delete,
   );

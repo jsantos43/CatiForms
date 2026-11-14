@@ -11,18 +11,13 @@ const router = Router();
 router
   .get(
     '/forms',
-    auth('logged'),
-    Controller.readOwn
-  )
-  .get(
-    '/forms/all',
-    auth('admin'),
+    auth,
     Controller.readAll
   )
   .get(
     '/forms/:id',
     validate(formIdSchema, 'params'),
-    auth('forms:read'),
+    auth,
     Controller.readById
   )
   .get(
@@ -32,14 +27,14 @@ router
   )
   .post(
     '/forms',
-    auth('logged'),
+    auth,
     validate(createFormSchema),
     Controller.create
   )
   .put(
     '/forms/:id',
     validate(formIdSchema, 'params'),
-    auth('forms:edit'),
+    auth,
     validate(updateFormSchema),
     verifyPublished,
     Controller.update,
@@ -47,7 +42,7 @@ router
   .delete(
     '/forms/:id',
     validate(formIdSchema, 'params'),
-    auth('forms:owner'),
+    auth,
     verifyPublished,
     Controller.delete
   )

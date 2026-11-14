@@ -9,6 +9,6 @@ const router = Router();
 router
   .post('/auth/login', validate(loginSchema), Controller.login)
   .post('/auth/refresh', Controller.refresh)
-  .post('/auth/logout', auth('logged'), Controller.logout);
+  .post('/auth/logout', auth, Controller.logout);
 
 export default router;

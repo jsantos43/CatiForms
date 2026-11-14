@@ -24,7 +24,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'c49e6d54b6134ab65e339509c2b3b074625f5fe18e8b2a990156b082c7f13c7d'>;
+  StorageHashBase<'0fb8a021afe4cffe6f70a91836ef68069e625ab2202f2b200894bbbf6654e430'>;
 export type ExecutionHash =
   ExecutionHashBase<'f3a46c17fb6c832b73b701db78c8f6ee80e33b993740e5ce6cba932337cd60e2'>;
 export type ProfileHash =
@@ -390,7 +390,6 @@ export namespace Models {
     readonly [RelationKeys]?: 'answers' | 'form';
   };
   export type public_User = {
-    admin: FieldOutputTypes['public']['User']['admin'];
     createdAt: FieldOutputTypes['public']['User']['createdAt'];
     email: FieldOutputTypes['public']['User']['email'];
     id: FieldOutputTypes['public']['User']['id'];
@@ -714,16 +713,6 @@ type ContractBase = Omit<
             };
             readonly User: {
               columns: {
-                readonly admin: {
-                  readonly dataType: 'pg/bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
-                  };
-                  readonly many: false;
-                };
                 readonly createdAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
@@ -1110,10 +1099,6 @@ type ContractBase = Omit<
           };
           readonly User: {
             readonly fields: {
-              readonly admin: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -1178,7 +1163,6 @@ type ContractBase = Omit<
               readonly table: 'User';
               readonly namespaceId: 'public';
               readonly fields: {
-                readonly admin: { readonly column: 'admin' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly email: { readonly column: 'email' };
                 readonly id: { readonly column: 'id' };

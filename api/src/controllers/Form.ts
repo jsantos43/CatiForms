@@ -9,18 +9,6 @@ import type {
 import Service from '../services/Form.js';
 
 class Form {
-  static async readOwn(req: Request, res: Response, next: NextFunction) {
-    try {
-      if (!req.user) throw new Unauthorized();
-
-      const forms = await Service.readByAuthor(req.user.id);
-
-      return res.status(200).json({ success: true, forms });
-    } catch (err) {
-      return next(err);
-    }
-  }
-
   static async readAll(req: Request, res: Response, next: NextFunction) {
     try {
       const forms = await Service.readAll();

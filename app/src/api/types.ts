@@ -5,7 +5,6 @@ export type User = {
   email: string;
   username: string;
   name: string | null;
-  admin: boolean;
   createdAt: string;
   updatedAt: string;
 };

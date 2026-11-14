@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { listForms } from '../../api/forms';
 import type { FormSummary } from '../../api/types';
-import { useAuth } from '../../auth/AuthContext';
 import { Alert } from '../../components/Alert';
 import { Button } from '../../components/Button';
 import { buttonClass } from '../../components/buttonClass';
@@ -17,8 +16,6 @@ type State =
   | { status: 'ready'; forms: FormSummary[] };
 
 export default function Formularios() {
-  const { user } = useAuth();
-  const isAdmin = !!user?.admin;
   const [state, setState] = useState<State>({ status: 'loading' });
   const [query, setQuery] = useState('');
   const [attempt, setAttempt] = useState(0);
@@ -26,14 +23,14 @@ export default function Formularios() {
   useEffect(() => {
     let active = true;
 
-    listForms({ all: isAdmin })
+    listForms()
       .then((forms) => active && setState({ status: 'ready', forms }))
       .catch(() => active && setState({ status: 'error' }));
 
     return () => {
       active = false;
     };
-  }, [attempt, isAdmin]);
+  }, [attempt]);
 
   const retry = () => {
     setState({ status: 'loading' });
@@ -56,9 +53,7 @@ export default function Formularios() {
         <div>
           <h1 className={styles.title}>Formulários</h1>
           <p className={styles.subtitle}>
-            {isAdmin
-              ? 'Todos os formulários da plataforma, com as respostas de cada um.'
-              : 'Os formulários que você criou, com as respostas de cada um.'}
+            Todos os formulários da plataforma, com as respostas de cada um.
           </p>
         </div>
         <Link to="/formularios/novo" className={buttonClass()}>

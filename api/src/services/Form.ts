@@ -1,7 +1,6 @@
 import { NotFound } from '../errors/index.js';
 import { db } from '../prisma/db.js';
 import type { CreateFormData, UpdateFormData } from '../schemas/Form.js';
-import type { AuthUser } from '../types/express.js';
 
 const formFields = [
   'id',
@@ -27,10 +26,6 @@ const formSummaries = () =>
 class Form {
   static async readAll() {
     return await formSummaries().all();
-  }
-
-  static async readByAuthor(authorId: string) {
-    return await formSummaries().where({ authorId }).all();
   }
 
   static async readById(id: string) {
@@ -94,19 +89,6 @@ class Form {
     if (!form) throw new NotFound('Form not found');
 
     return form.published;
-  }
-
-  // Usado pelo middleware de auth nas permissões "forms:*".
-  // Admin ou dono do form. Futuramente: usuários com quem o form foi compartilhado.
-  static async canManage(user: AuthUser, formId?: string) {
-    if (user.admin) return true;
-    if (!formId) return false;
-
-    const form = await db.orm.public.Form.select('authorId').first({ id: formId });
-
-    if (!form) throw new NotFound('Form not found');
-
-    return form.authorId === user.id;
   }
 }
 

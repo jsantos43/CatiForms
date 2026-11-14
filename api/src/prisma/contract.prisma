@@ -6,7 +6,6 @@ model User {
   username            String             @unique
   name                String?
   password            String
-  admin               Boolean            @default(false)
   sessionVersion      Int                @default(0)
   refreshTokenHash    String?            @unique
   refreshTokenExpires TimestamptzString?

@@ -1,9 +1,9 @@
 import { request } from './client';
 import type { Form, FormDetail, FormSummary } from './types';
 
-// GET /forms devolve os formulários do usuário logado; administradores veem todos (GET /forms/all).
-export const listForms = async ({ all = false } = {}) => {
-  const res = await request<{ forms: FormSummary[] }>(all ? '/forms/all' : '/forms');
+// GET /forms devolve todos os formulários da plataforma (RF14 / RN10).
+export const listForms = async () => {
+  const res = await request<{ forms: FormSummary[] }>('/forms');
   return res.forms;
 };
 

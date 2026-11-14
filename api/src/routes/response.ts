@@ -11,13 +11,13 @@ router
   .get(
     '/forms/:id/responses',
     validate(formIdSchema, 'params'),
-    auth('forms:read'),
+    auth,
     Controller.readAll,
   )
   .get(
     '/forms/:id/responses/:responseId',
     validate(responseIdSchema, 'params'),
-    auth('forms:read'),
+    auth,
     Controller.readById,
   )
   .post(
