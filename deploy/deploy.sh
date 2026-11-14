@@ -7,29 +7,29 @@ BASE_PATH="${BASE_PATH:-/catiforms/}"
 
 export PATH="/usr/bin:$PATH"
 
-step "API: instalando dependências e compilando"
+echo "==> API: instalando dependências e compilando"
 cd "$REPO_DIR/api"
 npm ci --no-audit --no-fund
 npm run build
 
-step "Banco: garantindo que o Postgres está rodando"
+echo "==> Banco: garantindo que o Postgres está rodando"
 docker compose -f "$REPO_DIR/deploy/compose.yaml" up -d --wait
 
-step "API: atualizando o banco de dados"
+echo "==> API: atualizando o banco de dados"
 # Recusa mudanças que perderiam dados; nesse caso o deploy para aqui e a versão antiga segue no ar.
 npm run db:update
 
-step "Front: instalando dependências e gerando o build"
+echo "==> Front: instalando dependências e gerando o build"
 cd "$REPO_DIR/app"
 npm ci --no-audit --no-fund
 VITE_BASE_PATH="$BASE_PATH" npm run build
 
-step "Front: publicando em $WEB_DIR"
+echo "==> Front: publicando em $WEB_DIR"
 mkdir -p "$WEB_DIR"
 find "$WEB_DIR" -mindepth 1 -delete
 cp -r dist/. "$WEB_DIR/"
 
-step "API: reiniciando $SERVICE"
+echo "==> API: reiniciando $SERVICE"
 sudo systemctl restart "$SERVICE"
 sleep 2
 if ! systemctl is-active --quiet "$SERVICE"; then
@@ -38,4 +38,4 @@ if ! systemctl is-active --quiet "$SERVICE"; then
   exit 1
 fi
 
-step "Deploy concluído ✔"
+echo "==> Deploy concluído ✔"
